@@ -14,8 +14,14 @@ class Level:
         self.items = pygame.sprite.Group()
         self.background_color = (135, 206, 235)  # Небесно-голубой
         
+        self.player = None  # Добавим ссылку на игрока
+        
         self.create_test_level()
         print(f"🗺️ Уровень '{name}' создан!")
+    
+    def set_player(self, player):
+        """Установить ссылку на игрока"""
+        self.player = player
     
     def create_test_level(self):
         """Создание тестового уровня"""
@@ -35,13 +41,16 @@ class Level:
         for x, y, w, h in platforms_data:
             self.platforms.add(Platform(x, y, w, h))
         
-        # Враги
-        self.enemies.add(Slime(200, 450))
-        self.enemies.add(Slime(400, 300))
+        # Слаймы - ставим их НА платформы
+        self.enemies.add(Slime(200, 468))   # На земле (500 - 32 = 468)
+        self.enemies.add(Slime(400, 318))   # На платформе (350 - 32 = 318)
+        self.enemies.add(Slime(150, 368))   # На платформе (400 - 32 = 368)
     
     def update(self, dt):
-        """Обновление уровня"""
-        self.enemies.update(dt, self)
+        """Обновление уровня - этот метод был отсутствовал!"""
+        # Обновляем врагов
+        for enemy in self.enemies:
+            enemy.update(dt, self)
     
     def draw(self, screen, camera):
         """Отрисовка уровня"""

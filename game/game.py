@@ -21,6 +21,9 @@ class Game:
         self.combat_system = CombatSystem(self)
         self.hud = HUD(self.player)
         
+        # Устанавливаем игрока в уровне
+        self.level.set_player(self.player)
+        
         # Состояние игры
         self.running = True
         self.paused = False
@@ -46,11 +49,10 @@ class Game:
         self.camera.update()
         
         # Обновление уровня (враги, предметы)
-        self.level.update(dt)
+        self.level.update(dt)  # ← Теперь этот метод существует!
         
         # Проверка боевых взаимодействий
         self.combat_system.check_attack_hits()
-        self.combat_system.check_enemy_attacks()
         
         # Обновление HUD
         self.hud.update(dt)

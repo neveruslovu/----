@@ -36,6 +36,9 @@ class Player(pygame.sprite.Sprite):
         self.experience = ExperienceSystem(self)
         self.inventory = Inventory()
         
+        # Таймер для эффектов
+        self.damage_effect_timer = 0
+        
         print("🎯 Игрок создан!")
     
     def handle_input(self):
@@ -124,6 +127,38 @@ class Player(pygame.sprite.Sprite):
             else:  # Справа
                 self.rect.left = platform_rect.right
     
+    def take_damage(self, amount):
+        """Игрок получает урон"""
+        damaged = self.health_component.take_damage(amount)
+        if damaged:
+            print(f"💔 Игрок получил {amount} урона! HP: {self.health_component.current_health}")
+            
+            # Эффект получения урона
+            self.damage_effect_timer = 0.3  # 300ms эффект
+            self.image.fill((255, 100, 100))  # Красный цвет при получении урона
+            
+        return damaged
+    
+    def update_visuals(self):
+        """Обновление визуального состояния игрока"""
+        if self.damage_effect_timer > 0:
+            # Мигание при получении урона
+            import time
+            blink = int(time.time() * 10) % 2
+            if blink == 0:
+                self.image.fill((255, 100, 100))  # Красный
+            else:
+                if self.velocity.x != 0:
+                    self.image.fill((0, 255, 0))  # Зеленый при движении
+                else:
+                    self.image.fill((255, 0, 0))  # Красный при стоянии
+        else:
+            # Нормальные цвета
+            if self.velocity.x != 0:
+                self.image.fill((0, 255, 0))  # Зеленый при движении
+            else:
+                self.image.fill((255, 0, 0))  # Красный при стоянии
+    
     def update(self, dt, level):
         """Обновление состояния игрока"""
         self.handle_input()
@@ -139,6 +174,11 @@ class Player(pygame.sprite.Sprite):
         # Обновление здоровья
         self.health_component.update(dt)
         
+        # Обновление визуальных эффектов
+        if self.damage_effect_timer > 0:
+            self.damage_effect_timer -= dt
+        self.update_visuals()
+        
         # Проверка смерти
         if self.health_component.is_dead():
             self.respawn()
@@ -149,6 +189,8 @@ class Player(pygame.sprite.Sprite):
         self.health_component.current_health = self.health_component.max_health
         self.rect.topleft = (100, 300)
         self.velocity = Vector2(0, 0)
+        self.damage_effect_timer = 0
+        self.update_visuals()  # Возвращаем нормальный цвет
     
     def draw(self, screen, camera):
         """Отрисовка игрока"""
