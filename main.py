@@ -12,7 +12,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'game'))
 
 from game.game import Game
-from game.menu import MainMenu
+from ui.menu import MainMenu
 
 class Application:
     def __init__(self):
@@ -86,27 +86,46 @@ class Application:
     
     def run(self):
         """Главный игровой цикл"""
-        try:
-            while self.running:
-                dt = self.clock.tick(self.fps) / 1000.0  # Delta time в секундах
-                
-                self.handle_events()
-                self.update(dt)
-                self.draw()
-                
-        except Exception as e:
-            print(f"❌ Ошибка в игровом цикле: {e}")
-            import traceback
-            traceback.print_exc()
+        clock = pygame.time.Clock()
+        running = True
+    
+        print("🎮 Starting game loop...")
+    
+        while running:
+            dt = clock.tick(60) / 1000.0
         
-        finally:
-            self.quit()
+            # Обработка событий
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                    print(f"⌨️  Key pressed: {pygame.key.name(event.key)}")
+        
+            # Получаем состояние клавиш для отладки движения
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]:
+                print(f"🎮 Continuous keys - LEFT: {keys[pygame.K_LEFT]}, RIGHT: {keys[pygame.K_RIGHT]}")
+        
+            # Обновление игры
+            self.game.handle_events(events)
+            self.game.update(dt)
+        
+            # Отрисовка
+            self.draw()
+        
+            pygame.display.flip()
+    
+    print("👋 Game loop ended")
     
     def start_game(self):
-        """Начать новую игру"""
-        print("🎮 Начинаем новую игру!")
+        """Запуск новой игры"""
+        print("🚀 Starting new game...")
         self.current_state = "game"
-        self.game = Game(self.screen)  # Пересоздаем игру
+        self.game = Game(self.screen)
+        print("✅ Game started successfully")
     
     def quit(self):
         """Корректный выход из игры"""

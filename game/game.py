@@ -7,7 +7,7 @@ from .player import Player
 from .camera import Camera
 from .level import Level
 from .combat import CombatSystem
-from .ui.hud import HUD
+from ..ui.hud import HUD
 
 class Game:
     def __init__(self, screen):
@@ -29,6 +29,11 @@ class Game:
         self.paused = False
         
         print("🎮 Игра инициализирована!")
+    
+    def handle_events(self, events):
+        """Обработка событий игры"""
+        for event in events:
+            self.handle_event(event)
     
     def handle_event(self, event):
         """Обработка событий игры"""
