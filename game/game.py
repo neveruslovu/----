@@ -16,7 +16,7 @@ class Game:
         
         # Инициализация систем
         self.level = Level("forest_01")
-        self.player = Player((100, 300))
+        self.player = Player(100, 300)
         self.camera = Camera(self.player, self.screen_size)
         self.combat_system = CombatSystem(self)
         self.hud = HUD(self.player)
@@ -43,7 +43,7 @@ class Game:
             return
             
         # Обновление игрока
-        self.player.update(dt, self.level)
+        self.player.update(self.platforms)
         
         # Обновление камеры
         self.camera.update()

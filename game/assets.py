@@ -1,4 +1,4 @@
-# game/asset_loader.py
+# game/assets.py
 import pygame
 import os
 

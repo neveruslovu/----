@@ -1,132 +1,90 @@
-"""
-Класс игрока - управление, физика, анимации
-"""
-
 import pygame
-import math  # ← ДОБАВЬ ЭТУ СТРОКУ
-from pygame.math import Vector2
-from .health import HealthComponent
-from .experience import ExperienceSystem
-from .items.inventory import Inventory
-from .animation import Animation
-from .asset_loader import asset_loader
+from .assets import asset_loader
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, pos=(100, 300)):
-        super().__init__()
-        
-        # Анимации
-        self.animations = self.create_animations()
-        self.current_animation = "idle"
+class Player:
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 40, 60)
+        self.hitbox = pygame.Rect(10, 10, 20, 50)
+        self.velocity_y = 0
+        self.speed = 5
+        self.jump_power = -15
+        self.gravity = 0.8
+        self.is_jumping = False
+        self.on_ground = False
         self.facing_right = True
         
-        self.image = self.animations["idle"].get_current_frame()
-        self.rect = self.image.get_rect(topleft=pos)
+        # Загрузка спрайтов
+        self.idle_sprite = asset_loader.load_image("player/alienPink_stand.png", 2)
+        self.current_sprite = self.idle_sprite
         
-        # Физика
-        self.velocity = Vector2(0, 0)
-        self.speed = 300
-        self.jump_power = -600
-        self.gravity = 1500
+        # Для отладки
+        self.show_hitbox = True
+
+    def update(self, platforms):
+        # Применяем гравитацию
+        self.velocity_y += self.gravity
+        self.rect.y += self.velocity_y
+        
+        # Проверка коллизий с платформами
         self.on_ground = False
+        for platform in platforms:
+            if self.check_collision(platform):
+                if self.velocity_y > 0:  # Падение вниз
+                    self.rect.bottom = platform.rect.top
+                    self.on_ground = True
+                    self.is_jumping = False
+                elif self.velocity_y < 0:  # Движение вверх
+                    self.rect.top = platform.rect.bottom
+                self.velocity_y = 0
+
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and self.on_ground:
+                self.jump()
+
+    def handle_keys(self, keys):
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= self.speed
+            self.facing_right = False
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += self.speed
+            self.facing_right = True
+
+    def jump(self):
+        if self.on_ground:
+            self.velocity_y = self.jump_power
+            self.is_jumping = True
+            self.on_ground = False
+
+    def check_collision(self, platform):
+        player_hitbox = pygame.Rect(
+            self.rect.x + self.hitbox.x,
+            self.rect.y + self.hitbox.y,
+            self.hitbox.width,
+            self.hitbox.height
+        )
+        return player_hitbox.colliderect(platform.rect)
+
+    def draw(self, screen, camera):
+        """Отрисовка игрока на экране с учетом камеры"""
+        screen_x = self.rect.x - camera.x
+        screen_y = self.rect.y - camera.y
         
-        # Боевая система
-        self.is_attacking = False
-        self.attack_cooldown = 0
-        self.attack_damage = 10
-        self.attack_rect = pygame.Rect(0, 0, 50, 32)
-        
-        # RPG системы
-        self.health_component = HealthComponent(100)
-        self.experience = ExperienceSystem(self)
-        self.inventory = Inventory()
-        
-        # Таймер для эффектов
-        self.damage_effect_timer = 0
-        
-        print("🎯 Игрок создан!")
-    
-    def create_animations(self):
-        """Создание анимаций из отдельных файлов Kenney"""
-        animations = {}
-        
-        try:
-            # ПРОСТОЙ ВАРИАНТ - загружаем каждую анимацию как один кадр
-            # Idle анимация
-            idle_img = asset_loader.load_image("player/player_idle.png", scale=2)
-            if idle_img:
-                animations["idle"] = Animation([idle_img], 0.2)
-                print("✅ Загружена idle анимация")
+        # Отрисовка спрайта
+        if self.current_sprite:
+            # Если персонаж смотрит влево, отражаем спрайт
+            if not self.facing_right:
+                flipped_sprite = pygame.transform.flip(self.current_sprite, True, False)
+                screen.blit(flipped_sprite, (screen_x, screen_y))
             else:
-                print("❌ Не удалось загрузить idle анимацию")
-
-            # Run анимация  
-            run_img = asset_loader.load_image("player/player_run.png", scale=2)
-            if run_img:
-                animations["run"] = Animation([run_img], 0.15)
-                print("✅ Загружена run анимация")
-            else:
-                print("❌ Не удалось загрузить run анимацию")
-
-            # Jump анимация
-            jump_img = asset_loader.load_image("player/player_jump.png", scale=2)
-            if jump_img:
-                animations["jump"] = Animation([jump_img], 0.2)
-                print("✅ Загружена jump анимация")
-            else:
-                print("❌ Не удалось загрузить jump анимацию")
-
-            # Hit анимация (если есть файл)
-            try:
-                hit_img = asset_loader.load_image("player/player_hit.png", scale=2)
-                if hit_img:
-                    animations["hit"] = Animation([hit_img], 0.1, loop=False)
-                    print("✅ Загружена hit анимация")
-            except:
-                print("ℹ️ Файл hit анимации не найден, создам заглушку")
-                hit_frame = pygame.Surface((32, 64), pygame.SRCALPHA)
-                hit_frame.fill((255, 100, 100))
-                animations["hit"] = Animation([hit_frame], 0.1, loop=False)
-
-            # Проверяем что загрузилось хотя бы одна анимация
-            if animations:
-                print("🎉 Анимации игрока загружены!")
-                return animations
-            else:
-                print("❌ Не удалось загрузить ни одну анимацию игрока")
-                return self.create_placeholder_animations()
-                
-        except Exception as e:
-            print(f"❌ Ошибка загрузки спрайтов: {e}")
-            import traceback
-            traceback.print_exc()
-            return self.create_placeholder_animations()
-    
-    def create_placeholder_animations(self):
-        """Анимации-заглушки на случай отсутствия спрайтов"""
-        animations = {}
+                screen.blit(self.current_sprite, (screen_x, screen_y))
         
-        # Idle анимация
-        idle_frames = []
-        for i in range(4):
-            frame = pygame.Surface((32, 64), pygame.SRCALPHA)
-            # Синий игрок
-            pygame.draw.ellipse(frame, (30, 144, 255), (8, 20, 16, 30))
-            pygame.draw.circle(frame, (255, 218, 185), (16, 15), 8)
-            pygame.draw.circle(frame, (0, 0, 0), (12, 13), 2)
-            pygame.draw.circle(frame, (0, 0, 0), (20, 13), 2)
-            idle_frames.append(frame)
-        animations["idle"] = Animation(idle_frames, 0.2)
-        
-        # Run анимация
-        run_frames = []
-        for i in range(6):
-            frame = pygame.Surface((32, 64), pygame.SRCALPHA)
-            color = (0, 255, 0) if i % 2 == 0 else (30, 144, 255)
-            pygame.draw.ellipse(frame, color, (8, 20, 16, 30))
-            run_frames.append(frame)
-        animations["run"] = Animation(run_frames, 0.1)
-        
-        return animations
-
-    # ... остальные методы класса (update, handle_input и т.д.)
+        # Отрисовка хитбокса (для отладки)
+        if self.show_hitbox:
+            hitbox_rect = pygame.Rect(
+                screen_x + self.hitbox.x,
+                screen_y + self.hitbox.y,
+                self.hitbox.width,
+                self.hitbox.height
+            )
+            pygame.draw.rect(screen, (255, 0, 0), hitbox_rect, 2)
