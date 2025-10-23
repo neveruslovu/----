@@ -14,8 +14,16 @@ class Player:
         self.facing_right = True
         
         # Загрузка спрайтов
+        # Загрузка спрайтов - добавьте отладку
+        print("🔄 Loading player sprites...")
         self.idle_sprite = asset_loader.load_image("player/alienPink_stand.png", 2)
         self.current_sprite = self.idle_sprite
+
+        # Проверка загрузки
+        if self.current_sprite:
+            print(f"✅ Player sprite loaded: {self.current_sprite.get_size()}")
+        else:
+            print("❌ Player sprite failed to load")
 
         # Добавляем health_component для HUD
         self.health_component = type('Health', (), {
@@ -84,15 +92,22 @@ class Player:
         # Используем offset вместо x, y
         screen_x = self.rect.x - camera.offset.x
         screen_y = self.rect.y - camera.offset.y
-    
+        print(f"🔄 Drawing player at: ({screen_x}, {screen_y}) with sprite: {self.current_sprite}")
+        
         # Отрисовка спрайта
         if self.current_sprite:
             # Если персонаж смотрит влево, отражаем спрайт
             if not self.facing_right:
                 flipped_sprite = pygame.transform.flip(self.current_sprite, True, False)
                 screen.blit(flipped_sprite, (screen_x, screen_y))
+                print("↩️  Flipped sprite")
             else:
                 screen.blit(self.current_sprite, (screen_x, screen_y))
+                print("➡️  Normal sprite")
+        else:
+            print("❌ No sprite to draw!")
+            # Рисуем заглушку
+            pygame.draw.rect(screen, (255, 0, 0), (screen_x, screen_y, 40, 60))
     
         # Отрисовка хитбокса (для отладки)
         if self.show_hitbox:
