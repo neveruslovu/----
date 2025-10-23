@@ -1,74 +1,103 @@
 import pygame
-import sys
-import os
 
-# Добавляем пути для импортов
-sys.path.append(os.path.dirname(__file__))
-
-from ui.menu import MainMenu
-from game.game import Game
-
-class Application:
-    def __init__(self):
-        pygame.init()
-        self.screen = pygame.display.set_mode((800, 600))
-        pygame.display.set_caption("RPG Platformer")
+class MainMenu:
+    def __init__(self, app):
+        self.app = app
+        self.options = ["Новая игра", "Загрузить", "Настройки", "Выход"]
+        self.selected_index = 0
+        self.font = pygame.font.Font(None, 48)
+        self.title_font = pygame.font.Font(None, 72)
         
-        self.current_state = "menu"
-        self.main_menu = MainMenu(self)
-        self.game = None
-        self.running = True
+        print("📋 MainMenu initialized")
+        print(f"📱 Menu app reference: {self.app}")
         
-        print("🎮 Application initialized")
-
-    def start_game(self):
-        """Запуск новой игры"""
-        print("🚀 START_GAME called - switching to game state")
-        self.current_state = "game"
-        self.game = Game(self.screen)
-        print(f"✅ Game started, state: {self.current_state}")
-
-    def run(self):
-        """Главный игровой цикл"""
-        clock = pygame.time.Clock()
-        
-        print("🎮 Starting main loop...")
-        print("💡 Use UP/DOWN arrows or mouse to navigate menu")
-        print("💡 Press ENTER or click to select")
-        
-        while self.running:
-            dt = clock.tick(60) / 1000.0
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            print(f"⌨️ Key pressed: {pygame.key.name(event.key)}")
             
-            # Обработка событий
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.QUIT:
-                    self.running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        if self.current_state == "game":
-                            self.current_state = "menu"
-                            print("↩️ Returning to menu")
-            
-            # Обработка состояний
-            if self.current_state == "menu":
-                for event in events:
-                    self.main_menu.handle_event(event)
-                self.main_menu.update(dt)
-                self.main_menu.draw(self.screen)
-                
-            elif self.current_state == "game":
-                # Игровой режим
-                self.game.handle_events(events)
-                self.game.update(dt)
-                self.game.draw(self.screen)
-            
-            pygame.display.flip()
+            if event.key == pygame.K_DOWN:
+                self.selected_index = (self.selected_index + 1) % len(self.options)
+                print(f"🎮 Menu selection: {self.options[self.selected_index]}")
+            elif event.key == pygame.K_UP:
+                self.selected_index = (self.selected_index - 1) % len(self.options)
+                print(f"🎮 Menu selection: {self.options[self.selected_index]}")
+            elif event.key == pygame.K_RETURN:
+                print(f"🎮 Menu selected: {self.options[self.selected_index]}")
+                self.select_option()
         
-        print("👋 Game ended")
-        pygame.quit()
-        sys.exit()
-
-if __name__ == "__main__":
-    app = Application()
-    app.run()
+        # Добавляем обработку мыши
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Левая кнопка мыши
+            mouse_pos = pygame.mouse.get_pos()
+            print(f"🖱️ Mouse clicked at: {mouse_pos}")
+            self.handle_mouse_click(mouse_pos)
+        
+        # Подсветка при наведении мышью
+        elif event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            self.handle_mouse_hover(mouse_pos)
+    
+    def handle_mouse_click(self, mouse_pos):
+        """Обработка клика мышью"""
+        for i, option in enumerate(self.options):
+            text = self.font.render(option, True, (255, 255, 255))
+            text_rect = text.get_rect(center=(self.app.screen.get_width()//2, 250 + i * 60))
+            
+            print(f"🔍 Checking option '{option}' at rect: {text_rect}")
+            
+            if text_rect.collidepoint(mouse_pos):
+                print(f"🎯 Mouse clicked on: {option}")
+                self.selected_index = i
+                self.select_option()
+                return True
+        
+        print("❌ No menu option clicked")
+        return False
+    
+    def handle_mouse_hover(self, mouse_pos):
+        """Подсветка при наведении мышью"""
+        for i, option in enumerate(self.options):
+            text = self.font.render(option, True, (255, 255, 255))
+            text_rect = text.get_rect(center=(self.app.screen.get_width()//2, 250 + i * 60))
+            
+            if text_rect.collidepoint(mouse_pos):
+                if self.selected_index != i:
+                    self.selected_index = i
+                    print(f"🖱️ Mouse over: {option}")
+                break
+    
+    def select_option(self):
+        option = self.options[self.selected_index]
+        print(f"🚀 Executing menu action: {option}")
+        print(f"📱 App reference in select_option: {self.app}")
+        
+        if option == "Новая игра":
+            print("🎮 Starting new game...")
+            self.app.start_game()
+        elif option == "Загрузить":
+            print("📂 Load game (not implemented)")
+        elif option == "Настройки":
+            print("⚙️ Settings (not implemented)")
+        elif option == "Выход":
+            print("👋 Exiting game...")
+            self.app.running = False
+    
+    def update(self, dt):
+        pass
+    
+    def draw(self, screen):
+        screen.fill((30, 30, 60))
+        
+        # Заголовок
+        title = self.title_font.render("RPG PLATFORMER", True, (255, 255, 255))
+        screen.blit(title, (screen.get_width()//2 - title.get_width()//2, 100))
+        
+        # Опции меню
+        for i, option in enumerate(self.options):
+            color = (255, 255, 0) if i == self.selected_index else (255, 255, 255)
+            text = self.font.render(option, True, color)
+            text_rect = text.get_rect(center=(screen.get_width()//2, 250 + i * 60))
+            screen.blit(text, text_rect)
+            
+            # Отладочная рамка (временно)
+            debug_rect = text_rect.inflate(20, 10)
+            pygame.draw.rect(screen, (255, 0, 0), debug_rect, 1)

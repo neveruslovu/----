@@ -1,7 +1,7 @@
-from .game import Game
+# game/__init__.py
+# Оставляем только базовые импорты, без циклических зависимостей
 from .player import Player
 from .platform import Platform
 from .camera import Camera
-from .level import Level
 
-__all__ = ['Game', 'Player', 'Platform', 'Camera', 'Level']
+__all__ = ['Player', 'Platform', 'Camera']

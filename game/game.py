@@ -1,32 +1,27 @@
-"""
-Основной класс игры, управляющий всеми системами
-"""
-
 import pygame
-from .player import Player
-from .camera import Camera
-from .level import Level
-from .combat import CombatSystem
-from ..ui.hud import HUD
+import os
+import sys
+
+# Добавляем путь к корню проекта для абсолютных импортов
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from game.player import Player
+from game.camera import Camera
+from game.level import Level
+from ui.hud import HUD  # Теперь это абсолютный импорт
 
 class Game:
     def __init__(self, screen):
         self.screen = screen
-        self.screen_size = screen.get_size()
-        
-        # Инициализация систем
+        self.camera = Camera(Player(100, 300), (800, 600))  # Создаем временного игрока для камеры
         self.level = Level("forest_01")
+        
+        # Создаем игрока после уровня
         self.player = Player(100, 300)
-        self.camera = Camera(self.player, self.screen_size)
-        self.combat_system = CombatSystem(self)
+        self.camera.target = self.player  # Обновляем цель камеры
+        
+        # Создаем HUD
         self.hud = HUD(self.player)
-        
-        # Устанавливаем игрока в уровне
-        self.level.set_player(self.player)
-        
-        # Состояние игры
-        self.running = True
-        self.paused = False
         
         print("🎮 Игра инициализирована!")
     
@@ -36,54 +31,37 @@ class Game:
             self.handle_event(event)
     
     def handle_event(self, event):
-        """Обработка событий игры"""
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:
-                self.paused = not self.paused
-                print(f"{'⏸️ Пауза' if self.paused else '▶️ Продолжить'}")
+        """Обработка одиночного события"""
+        self.player.handle_event(event)
     
     def update(self, dt):
         """Обновление состояния игры"""
         # Обработка непрерывного ввода (клавиши)
         keys = pygame.key.get_pressed()
         self.player.handle_keys(keys)
-    
-        # Обновление игрока - передаем platforms из уровня
-        if hasattr(self.level, 'platforms'):
-            self.player.update(self.level.platforms)
-        elif hasattr(self.level, 'tiles'):
-            self.player.update(self.level.tiles)
-        else:
-            # Если нет platforms, передаем пустой список
-            self.player.update([])
-    
-        # Обновление камеры (без передачи player, если не нужно)
-        try:
-            self.camera.update(self.player)  # Пробуем с аргументом
-        except TypeError:
-            try:
-                self.camera.update()  # Пробуем без аргумента
-            except Exception as e:
-                print(f"Camera update error: {e}")
-    
-        # Обновление уровня (враги и т.д.)
-        if hasattr(self.level, 'update'):
-            self.level.update(dt)
+        
+        # Обновление игрока
+        self.player.update(self.level.platforms)
+        
+        # Обновление камеры
+        self.camera.update()
+        
+        # Обновление уровня
+        self.level.update(dt)
     
     def draw(self, screen):
         """Отрисовка игры"""
+        # Очистка экрана
+        screen.fill((135, 206, 235))  # Голубой фон
+        
         # Отрисовка уровня
         self.level.draw(screen, self.camera)
         
         # Отрисовка игрока
         self.player.draw(screen, self.camera)
         
-        # Отрисовка HUD поверх всего
+        # Отрисовка HUD
         self.hud.draw(screen)
-        
-        # Отрисовка паузы
-        if self.paused:
-            self.draw_pause_screen(screen)
     
     def draw_pause_screen(self, screen):
         """Отрисовка экрана паузы"""
