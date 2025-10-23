@@ -25,18 +25,9 @@ class Player:
         self.idle_sprite = asset_loader.load_image("player/alienPink_stand.png", 0.3)
         self.current_sprite = self.idle_sprite
         
-        # Компоненты для HUD
-        self.health_component = type('Health', (), {
-            'current_health': 100,
-            'max_health': 100
-        })()
-        
-        self.experience = type('Experience', (), {
-            'current_level': 1,
-            'current_exp': 0,
-            'exp_to_next_level': 100
-        })()
-        
+        from .health import HealthComponent
+        self.health_component = HealthComponent(100) 
+               
 
     def update(self, platforms):
         """Обновление состояния игрока с улучшенной физикой"""
