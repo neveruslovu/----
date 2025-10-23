@@ -16,7 +16,7 @@ class Player:
         print(f"🎯 Player created at position: ({x}, {y})")
         
         # Загрузка спрайтов
-        self.idle_sprite = asset_loader.load_image("player/alienPink_stand.png", 2)
+        self.idle_sprite = asset_loader.load_image("player/alienPink_stand.png", 0.3)
         self.current_sprite = self.idle_sprite
         
         # Компоненты для HUD
