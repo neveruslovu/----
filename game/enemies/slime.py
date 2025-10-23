@@ -10,6 +10,7 @@ class Slime(pygame.sprite.Sprite):
         self.image = pygame.Surface((32, 24))
         self.image.fill((0, 255, 0))  # Зеленый квадрат
         self.rect = self.image.get_rect(topleft=(x, y))
+
         
         # Базовая физика
         self.health_component = HealthComponent(30)
@@ -66,7 +67,7 @@ class Slime(pygame.sprite.Sprite):
     
         try:
             # Загрузка спрайт-листа слайма
-            slime_img = asset_loader.load_image("enemies/slimeBlock.png", scale=2)
+            slime_img = asset_loader.load_image("enemies/barnacle.png", scale=2)
             if slime_img:
                 # Используем один кадр для всех анимаций
                 animations["idle"] = Animation([slime_img], 0.2)

@@ -7,7 +7,7 @@ class Platform(pygame.sprite.Sprite):
         
         # Пытаемся загрузить спрайт платформы
         try:
-            self.image = asset_loader.load_image("tiles/tile_0000.png", scale=2)
+            self.image = asset_loader.load_image("tiles/brickBrown.png", scale=2)
             # Масштабируем под нужный размер
             self.image = pygame.transform.scale(self.image, (width, height))
             print("✅ Загружены спрайты платформ")

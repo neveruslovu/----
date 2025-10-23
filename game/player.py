@@ -13,6 +13,12 @@ class Player:
         self.on_ground = False
         self.facing_right = True
         
+        # 🔧 УЛУЧШЕНИЕ: Coyote Time переменные
+        self.coyote_time = 0.15  # 150ms окно для прыжка после схода с платформы
+        self.time_since_ground = 0
+        self.jump_buffer = 0     # Буфер ввода прыжка
+        self.jump_buffer_time = 0.1  # 100ms буфер
+        
         print(f"🎯 Player created at position: ({x}, {y})")
         
         # Загрузка спрайтов
@@ -34,14 +40,17 @@ class Player:
         self.show_hitbox = True
 
     def update(self, platforms):
-        """Обновление состояния игрока"""
-        print(f"🔄 Player update - Position: ({self.rect.x}, {self.rect.y}), Velocity: {self.velocity_y}, On ground: {self.on_ground}")
+        """Обновление состояния игрока с улучшенной физикой"""
+        # Сохраняем состояние до обновления
+        was_on_ground = self.on_ground
         
         # Применяем гравитацию
         self.velocity_y += self.gravity
         self.rect.y += self.velocity_y
         
-        print(f"📉 After gravity - Position: ({self.rect.x}, {self.rect.y}), Velocity: {self.velocity_y}")
+        # 🔧 УЛУЧШЕНИЕ: Обновляем таймеры
+        if self.jump_buffer > 0:
+            self.jump_buffer -= 1/60  # Уменьшаем буфер
         
         # Проверка коллизий с платформами
         self.on_ground = False
@@ -55,55 +64,65 @@ class Player:
                     self.on_ground = True
                     self.is_jumping = False
                     self.velocity_y = 0
-                    print("👆 Landed on platform")
+                    self.time_since_ground = 0  # 🔧 Сбрасываем таймер
                 elif self.velocity_y < 0:  # Движение вверх
                     self.rect.top = platform.rect.bottom
                     self.velocity_y = 0
-                    print("👇 Hit platform from below")
         
-        print(f"📊 Collisions detected: {collision_count}, On ground: {self.on_ground}")
+        # 🔧 УЛУЧШЕНИЕ: Обновляем Coyote Time
+        if self.on_ground:
+            self.time_since_ground = 0
+        elif was_on_ground:
+            # Только что оторвались от земли
+            self.time_since_ground = 0
+        else:
+            # В воздухе - увеличиваем таймер
+            self.time_since_ground += 1/60  # ~16.67ms за кадр
+        
+        # 🔧 УЛУЧШЕНИЕ: Автопрыжок по буферу
+        if self.jump_buffer > 0 and self.can_jump():
+            self.jump()
+            self.jump_buffer = 0
 
     def handle_event(self, event):
         """Обработка одиночных событий"""
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and self.on_ground:
-                self.jump()
-                print("🦘 Jump!")
+            if event.key == pygame.K_SPACE:
+                # 🔧 УЛУЧШЕНИЕ: Сохраняем ввод в буфер вместо немедленного прыжка
+                self.jump_buffer = self.jump_buffer_time
+                print("💾 Jump input buffered")
 
     def handle_keys(self, keys):
         """Обработка непрерывного ввода клавиш"""
         moved = False
     
-        # Проверяем все возможные клавиши движения
         arrow_left = keys[pygame.K_LEFT] 
         arrow_right = keys[pygame.K_RIGHT]
-        a_key = keys[pygame.K_a]  # Альтернативная клавиша A
-        d_key = keys[pygame.K_d]  # Альтернативная клавиша D
+        a_key = keys[pygame.K_a]
+        d_key = keys[pygame.K_d]
     
         if arrow_left or a_key:
             self.rect.x -= self.speed
             self.facing_right = False
             moved = True
-            print(f"⬅️  Moving LEFT (Arrow: {arrow_left}, A: {a_key})")
         if arrow_right or d_key:
             self.rect.x += self.speed
             self.facing_right = True
             moved = True
-            print(f"➡️  Moving RIGHT (Arrow: {arrow_right}, D: {d_key})")
-    
-        if moved:
-            print(f"🎯 New position: ({self.rect.x}, {self.rect.y})")
 
-        else:
-            print("⏸️  No movement keys pressed")
+    def can_jump(self):
+        """🔧 УЛУЧШЕНИЕ: Проверяет, может ли игрок прыгнуть"""
+        return (self.on_ground or 
+                self.time_since_ground < self.coyote_time) and not self.is_jumping
 
     def jump(self):
-        """Прыжок игрока"""
-        if self.on_ground:
+        """🔧 УЛУЧШЕНИЕ: Умный прыжок с Coyote Time"""
+        if self.can_jump():
             self.velocity_y = self.jump_power
             self.is_jumping = True
             self.on_ground = False
-            print(f"🚀 Jump! Velocity: {self.velocity_y}")
+            self.time_since_ground = self.coyote_time  # Предотвращаем повторные прыжки
+            print(f"🚀 Jump! Velocity: {self.velocity_y}, Coyote: {self.time_since_ground:.2f}")
 
     def check_collision(self, platform):
         """Проверка коллизии с платформой"""
@@ -120,8 +139,6 @@ class Player:
         screen_x = self.rect.x - camera.offset.x
         screen_y = self.rect.y - camera.offset.y
         
-        print(f"🎨 Drawing player at screen: ({screen_x}, {screen_y}), world: ({self.rect.x}, {self.rect.y})")
-        
         # Отрисовка спрайта
         if self.current_sprite:
             if not self.facing_right:
@@ -130,7 +147,6 @@ class Player:
             else:
                 screen.blit(self.current_sprite, (screen_x, screen_y))
         else:
-            # Заглушка если спрайт не загружен
             pygame.draw.rect(screen, (255, 0, 0), (screen_x, screen_y, 40, 60))
         
         # Отрисовка хитбокса (для отладки)
@@ -142,3 +158,4 @@ class Player:
                 self.hitbox.height
             )
             pygame.draw.rect(screen, (255, 0, 0), hitbox_rect, 2)
+            
