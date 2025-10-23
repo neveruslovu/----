@@ -5,7 +5,7 @@
 import pygame
 from .platform import Platform
 from .enemies.slime import Slime
-
+from .asset_loader import asset_loader
 class Level:
     def __init__(self, name):
         print(f"🗺️ Creating level: {name}")
@@ -13,7 +13,7 @@ class Level:
         self.platforms = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.items = pygame.sprite.Group()
-        self.background_color = (135, 206, 235)  # Небесно-голубой
+        self.background = asset_loader.load_image("backgrounds/colored_grass.png", 1)
         
         self.player = None  # Добавим ссылку на игрока
         
@@ -56,7 +56,7 @@ class Level:
     def draw(self, screen, camera):
         """Отрисовка уровня"""
         # Фон
-        screen.fill(self.background_color)
+        screen.blit(self.background, (0, 0))
         
         # Платформы
         for platform in self.platforms:
@@ -65,3 +65,4 @@ class Level:
         # Враги
         for enemy in self.enemies:
             enemy.draw(screen, camera)
+    
