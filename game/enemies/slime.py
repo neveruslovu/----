@@ -6,12 +6,28 @@ class Slime(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         
-        # Простая графика
-        self.image = pygame.Surface((32, 24))
-        self.image.fill((0, 255, 0))  # Зеленый квадрат
-        self.rect = self.image.get_rect(topleft=(x, y))
+        self.idle_sprite = asset_loader.load_image("enemies/slimePurple.png", 0.4)
+        self.current_sprite = self.idle_sprite
+    
+        # Графика - используем загруженный спрайт
+        if self.current_sprite:
+            self.image = self.current_sprite
+            self.rect = self.image.get_rect(topleft=(x, y))
+            # Хитбокс относительно РЕАЛЬНОГО размера спрайта
+            sprite_width, sprite_height = self.image.get_size()
+            self.hitbox = pygame.Rect(
+                (sprite_width -20 ) // 2,  # Центрируем по горизонтали
+                (sprite_height +13) // 2, # Центрируем по вертикали
+                22, 22
+            )
+        else:
+            self.image = pygame.Surface((34, 24))
+            self.rect = self.image.get_rect(topleft=(x, y))
+            self.hitbox = pygame.Rect(10, 10, 20, 20)
+        
+
         self.show_hitbox = True
-        self.hitbox = pygame.Rect(10, 10, 20, 20)
+        
 
         # Базовая физика
         self.health_component = HealthComponent(30)
@@ -20,10 +36,6 @@ class Slime(pygame.sprite.Sprite):
         self.velocity = pygame.math.Vector2(0, 0)
         self.gravity = 1500
         self.facing_right = True
-        
-        # Базовая графика
-        self.idle_sprite = asset_loader.load_image("enemies/slimePurple.png", 0.3)
-        self.current_sprite = self.idle_sprite
         
         print(f"🐌 Слайм создан на позиции ({x}, {y})!")
     
@@ -87,27 +99,3 @@ class Slime(pygame.sprite.Sprite):
                 self.hitbox.height
             )
             pygame.draw.rect(screen, (255, 0, 0), hitbox_rect, 2)
-        
-      
-
-    def create_animations(self):
-        """Создание анимаций слайма"""
-        animations = {}
-    
-        try:
-            # Загрузка спрайт-листа слайма
-            slime_img = asset_loader.load_image("enemies/barnacle.png", scale=2)
-            if slime_img:
-                # Используем один кадр для всех анимаций
-                animations["idle"] = Animation([slime_img], 0.2)
-                animations["move"] = Animation([slime_img], 0.15) 
-                animations["attack"] = Animation([slime_img], 0.1)
-                animations["hit"] = Animation([slime_img], 0.05, loop=False)
-                print("✅ Загружены спрайты слайма")
-                return animations
-            
-        except Exception as e:
-            print(f"❌ Ошибка загрузки спрайтов слайма: {e}")
-    
-    # Заглушки если не получилось
-        return self.create_placeholder_animations()
