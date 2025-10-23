@@ -12,7 +12,7 @@ class Player:
         self.is_jumping = False
         self.on_ground = False
         self.facing_right = True
-        
+        self.show_hitbox = True
         # 🔧 УЛУЧШЕНИЕ: Coyote Time переменные
         self.coyote_time = 0.15  # 150ms окно для прыжка после схода с платформы
         self.time_since_ground = 0
@@ -37,7 +37,6 @@ class Player:
             'exp_to_next_level': 100
         })()
         
-        self.show_hitbox = True
 
     def update(self, platforms):
         """Обновление состояния игрока с улучшенной физикой"""

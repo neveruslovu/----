@@ -10,14 +10,20 @@ class Slime(pygame.sprite.Sprite):
         self.image = pygame.Surface((32, 24))
         self.image.fill((0, 255, 0))  # Зеленый квадрат
         self.rect = self.image.get_rect(topleft=(x, y))
+        self.show_hitbox = True
+        self.hitbox = pygame.Rect(10, 10, 20, 20)
 
-        
         # Базовая физика
         self.health_component = HealthComponent(30)
         self.speed = 40
         self.direction = 1
         self.velocity = pygame.math.Vector2(0, 0)
         self.gravity = 1500
+        self.facing_right = True
+        
+        # Базовая графика
+        self.idle_sprite = asset_loader.load_image("enemies/slimePurple.png", 0.3)
+        self.current_sprite = self.idle_sprite
         
         print(f"🐌 Слайм создан на позиции ({x}, {y})!")
     
@@ -58,8 +64,31 @@ class Slime(pygame.sprite.Sprite):
         return damaged
     
     def draw(self, screen, camera):
-        """Отрисовка слайма"""
-        screen.blit(self.image, camera.apply(self.rect))
+        """Отрисовка slimes"""
+        screen_x = self.rect.x - camera.offset.x
+        screen_y = self.rect.y - camera.offset.y
+        
+        # Отрисовка спрайта
+        if self.current_sprite:
+            if not self.facing_right:
+                flipped_sprite = pygame.transform.flip(self.current_sprite, True, False)
+                screen.blit(flipped_sprite, (screen_x, screen_y))
+            else:
+                screen.blit(self.current_sprite, (screen_x, screen_y))
+        else:
+            pygame.draw.rect(screen, (255, 0, 0), (screen_x, screen_y, 40, 60))
+        
+        # Отрисовка хитбокса (для отладки)
+        if self.show_hitbox:
+            hitbox_rect = pygame.Rect(
+                screen_x + self.hitbox.x,
+                screen_y + self.hitbox.y,
+                self.hitbox.width,
+                self.hitbox.height
+            )
+            pygame.draw.rect(screen, (255, 0, 0), hitbox_rect, 2)
+        
+      
 
     def create_animations(self):
         """Создание анимаций слайма"""
