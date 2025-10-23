@@ -3,8 +3,8 @@ from .asset_loader import asset_loader
 
 class Player:
     def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, 40, 60)
-        self.hitbox = pygame.Rect(10, 10, 20, 50)
+        self.rect = pygame.Rect(x, y, 40, 50)
+        self.hitbox = pygame.Rect(10, 10, 20, 45)
         self.velocity_y = 0
         self.speed = 5
         self.jump_power = -15
