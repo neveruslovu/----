@@ -38,24 +38,32 @@ class Game:
                 print(f"{'⏸️ Пауза' if self.paused else '▶️ Продолжить'}")
     
     def update(self, dt):
-        """Обновление игровой логики"""
-        if self.paused:
-            return
-            
-        # Обновление игрока
-        self.player.update(self.platforms)
-        
-        # Обновление камеры
-        self.camera.update()
-        
-        # Обновление уровня (враги, предметы)
-        self.level.update(dt)  # ← Теперь этот метод существует!
-        
-        # Проверка боевых взаимодействий
-        self.combat_system.check_attack_hits()
-        
-        # Обновление HUD
-        self.hud.update(dt)
+        """Обновление состояния игры"""
+        # Обработка непрерывного ввода (клавиши)
+        keys = pygame.key.get_pressed()
+        self.player.handle_keys(keys)
+    
+        # Обновление игрока - передаем platforms из уровня
+        if hasattr(self.level, 'platforms'):
+            self.player.update(self.level.platforms)
+        elif hasattr(self.level, 'tiles'):
+            self.player.update(self.level.tiles)
+        else:
+            # Если нет platforms, передаем пустой список
+            self.player.update([])
+    
+        # Обновление камеры (без передачи player, если не нужно)
+        try:
+            self.camera.update(self.player)  # Пробуем с аргументом
+        except TypeError:
+            try:
+                self.camera.update()  # Пробуем без аргумента
+            except Exception as e:
+                print(f"Camera update error: {e}")
+    
+        # Обновление уровня (враги и т.д.)
+        if hasattr(self.level, 'update'):
+            self.level.update(dt)
     
     def draw(self, screen):
         """Отрисовка игры"""

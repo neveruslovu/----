@@ -16,6 +16,20 @@ class Player:
         # Загрузка спрайтов
         self.idle_sprite = asset_loader.load_image("player/alienPink_stand.png", 2)
         self.current_sprite = self.idle_sprite
+
+        # Добавляем health_component для HUD
+        self.health_component = type('Health', (), {
+            'current_health': 100,
+            'max_health': 100
+        })()
+
+        # Добавляем experience компонент для HUD
+        self.experience = type('Experience', (), {
+            'current_level': 1,
+            'current_exp': 0,
+            'exp_to_next_level': 100
+        })()
+
         
         # Для отладки
         self.show_hitbox = True
@@ -67,9 +81,10 @@ class Player:
 
     def draw(self, screen, camera):
         """Отрисовка игрока на экране с учетом камеры"""
-        screen_x = self.rect.x - camera.x
-        screen_y = self.rect.y - camera.y
-        
+        # Используем offset вместо x, y
+        screen_x = self.rect.x - camera.offset.x
+        screen_y = self.rect.y - camera.offset.y
+    
         # Отрисовка спрайта
         if self.current_sprite:
             # Если персонаж смотрит влево, отражаем спрайт
@@ -78,13 +93,13 @@ class Player:
                 screen.blit(flipped_sprite, (screen_x, screen_y))
             else:
                 screen.blit(self.current_sprite, (screen_x, screen_y))
-        
+    
         # Отрисовка хитбокса (для отладки)
         if self.show_hitbox:
             hitbox_rect = pygame.Rect(
-                screen_x + self.hitbox.x,
-                screen_y + self.hitbox.y,
-                self.hitbox.width,
-                self.hitbox.height
-            )
+            screen_x + self.hitbox.x,
+            screen_y + self.hitbox.y,
+            self.hitbox.width,
+            self.hitbox.height
+        )
             pygame.draw.rect(screen, (255, 0, 0), hitbox_rect, 2)
