@@ -38,30 +38,39 @@ class HUD:
     def draw(self, screen):
         """Отрисовка HUD с сердцами"""
         try:
-            # Получаем текущее здоровье игрока
+            # 🔥 ИСПРАВЛЕНИЕ: Получаем здоровье напрямую из health_component игрока
             if hasattr(self.player, 'health_component'):
+                # Предполагаем, что health_component имеет current_health и max_health
                 current_health = self.player.health_component.current_health
                 max_health = self.player.health_component.max_health
             else:
+                # 🔥 РЕЗЕРВНАЯ ЛОГИКА: если health_component нет, используем значения по умолчанию
                 current_health = 100
                 max_health = 100
+                print("⚠️ HealthComponent не найден, используем значения по умолчанию")
             
             # 🔧 ОТРИСОВКА СЕРДЕЦ
             self.draw_hearts(screen, current_health, max_health)
             
-            # Отрисовка уровня (оставляем старую логику)
-            if hasattr(self.player, 'experience'):
-                level_text = f"Level: {self.player.experience.current_level}"
-            else:
-                level_text = "Level: 1"
+            # 🔥 ДОПОЛНИТЕЛЬНО: отображаем числовое значение HP для отладки
+            hp_text = f"HP: {current_health}/{max_health}"
+            hp_surface = self.font.render(hp_text, True, (255, 255, 255))
+            screen.blit(hp_surface, (10, 50))
             
-            level_surface = self.font.render(level_text, True, (255, 255, 255))
-            screen.blit(level_surface, (10, 50))
+            # 🔥 ОТОБРАЖЕНИЕ СОСТОЯНИЯ ИГРОКА (жив/мертв)
+            if hasattr(self.player, 'is_alive') and not self.player.is_alive:
+                death_text = self.font.render("DEAD - Respawning...", True, (255, 0, 0))
+                screen.blit(death_text, (10, 90))
             
+            # 🔥 ОТОБРАЖЕНИЕ НЕУЯЗВИМОСТИ
+            if hasattr(self.player, 'is_invincible') and self.player.is_invincible:
+                invincible_text = self.font.render("INVINCIBLE", True, (0, 255, 255))
+                screen.blit(invincible_text, (10, 130))
+                
         except Exception as e:
             print(f"❌ HUD error: {e}")
             # Минимальный HUD при ошибках
-            error_text = self.font.render("HUD", True, (255, 255, 255))
+            error_text = self.font.render("HUD ERROR", True, (255, 0, 0))
             screen.blit(error_text, (10, 10))
     
     def draw_hearts(self, screen, current_health, max_health):

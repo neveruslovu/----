@@ -32,12 +32,18 @@ class RPGPlatformer:
         self.camera = None
         self.hud = None
         
+        # ⏰ ДОБАВЛЕНО: Переменная для отслеживания времени игры
+        self.game_start_time = 0
+        
         print("🎮 RPG Platformer инициализирован!")
     
     def start_game(self):
         """Запуск новой игры"""
         print("🚀 Запуск новой игры...")
         self.state = "game"
+        
+        # ⏰ ДОБАВЛЕНО: Запоминаем время начала игры
+        self.game_start_time = pygame.time.get_ticks()
         
         # Создаем игровые объекты
         self.player = Player(100, 300)
@@ -67,16 +73,25 @@ class RPGPlatformer:
     
     def update(self):
         dt = self.clock.get_time() / 1000.0  # Delta time в секундах
-        
+    
         if self.state == "game" and self.player and self.level:
-            # Обновление игрока
+            # ⏰ ДОБАВЛЕНО: Получаем текущее время игры
+            current_time = (pygame.time.get_ticks() - self.game_start_time) / 1000.0
+        
+            # 🔧 ВАЖНО: Обрабатываем непрерывный ввод клавиш
             keys = pygame.key.get_pressed()
-            self.player.handle_keys(keys)
-            self.player.update(self.level.platforms)
-            
+            self.player.handle_keys(keys)  # 🔥 ДОБАВЛЕНО ЭТА СТРОКА
+        
+            # 🔧 Обновляем игрока
+            self.player.update(
+            platforms=self.level.platforms,
+            enemies=self.level.enemies,
+            current_time=current_time
+            )
+        
             # Обновление уровня
             self.level.update(dt)
-            
+        
             # Обновление камеры
             self.camera.update()
     
@@ -105,6 +120,3 @@ class RPGPlatformer:
 if __name__ == "__main__":
     game = RPGPlatformer()
     game.run()
-
-
-
