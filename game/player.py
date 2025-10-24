@@ -213,25 +213,19 @@ class Player:
 
     def check_enemy_collisions(self, enemies, current_time):
         """Проверяет столкновения с врагами и обрабатывает урон"""
-        enemies_to_remove = []
-        
         for enemy in enemies.sprites():
             if self.check_collision_with_enemy(enemy):
                 # Определяем тип столкновения
                 collision_type = self.get_collision_type(enemy)
-                
+            
                 if collision_type == "top":  # Игрок прыгает на врага сверху
-                    enemies_to_remove.append(enemy)
+                    # 🔥 ПРОСТО НАНОСИМ УРОН - слайм сам умрет с анимацией
                     self.kill_enemy(enemy)
                     print("🔨 Enemy killed by jump!")
-                elif not self.is_invincible and self.is_alive:  # 🔥 ДОБАВЛЕНА ПРОВЕРКА is_alive
+                elif not self.is_invincible and self.is_alive:
                     # Игрок получает урон сбоку или снизу
                     self.take_damage(10, enemy)
                     print("💥 Player took damage from enemy!")
-        
-        # Удаляем врагов после цикла
-        for enemy in enemies_to_remove:
-            enemies.remove(enemy)
 
     def get_collision_type(self, enemy):
         """Определяет тип столкновения с врагом"""
@@ -248,6 +242,8 @@ class Player:
 
     def kill_enemy(self, enemy):
         """Убивает врага и дает отскок игроку"""
+        # 🔥 НАНОСИМ НОРМАЛЬНЫЙ УРОН, а не 100
+        enemy.take_damage(30)  # Достаточно чтобы убить слайма с 30 HP
         self.velocity_y = self.bounce_power
         print(f"🎯 Enemy defeated! Bounce: {self.velocity_y}")
 
@@ -314,6 +310,10 @@ class Player:
 
     def check_collision_with_enemy(self, enemy):
         """Проверка коллизии с врагом"""
+        # 🔥 ПРОВЕРЯЕМ, ЧТО ВРАГ ЖИВ И НЕ В РЕЖИМЕ СМЕРТИ
+        if hasattr(enemy, 'is_dead') and enemy.is_dead:
+            return False  # Мертвые враги не вызывают столкновений
+    
         player_hitbox = pygame.Rect(
             self.rect.x + self.hitbox.x,
             self.rect.y + self.hitbox.y,
