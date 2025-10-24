@@ -41,20 +41,29 @@ class RPGPlatformer:
         """Запуск новой игры"""
         print("🚀 Запуск новой игры...")
         self.state = "game"
-        
-        # ⏰ ДОБАВЛЕНО: Запоминаем время начала игры
         self.game_start_time = pygame.time.get_ticks()
+    
+        try:
+            # 🔥 ВАЖНО: Сначала создаем уровень, потом игрока
+            self.level = Level("level1")
+            print("✅ Уровень создан")
         
-        # Создаем игровые объекты
-        self.player = Player(100, 300)
-        self.level = Level("forest_01")
-        self.camera = Camera(self.player, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-        self.hud = HUD(self.player)
+            # 🔥 ИГРОК СОЗДАЕТСЯ В ПОЗИЦИИ (0,0), НО СРАЗУ ПЕРЕМЕЩАЕТСЯ
+            self.player = Player(0, 0)
+            print("✅ Игрок создан")
         
-        # Связываем игрока с уровнем
-        self.level.set_player(self.player)
+            # 🔥 УСТАНАВЛИВАЕМ ИГРОКА В УРОВНЕ (ЭТО ПЕРЕМЕСТИТ ЕГО НА СПАВН)
+            self.level.set_player(self.player)
         
-        print("✅ Игра запущена!")
+            self.camera = Camera(self.player, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+            self.hud = HUD(self.player)
+        
+            print("✅ Игра запущена!")
+        
+        except Exception as e:
+            print(f"❌ Ошибка при запуске игры: {e}")
+            import traceback
+            traceback.print_exc()
     
     def handle_events(self):
         for event in pygame.event.get():
