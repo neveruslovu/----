@@ -75,7 +75,7 @@ class Player:
         self.respawn_duration = 2.0
         self.respawn_position = (x, y)  # 🔥 Сохраняем позицию респавна
         
-        self.health_component = self.HealthComponent(100)
+        self.health_component = self.HealthComponent(60)
         print(f"🎯 Player created at position: ({x}, {y})")
         
         # 🎨 Загрузка всех спрайтов для анимаций
