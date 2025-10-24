@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="8" nextobjectid="90">
+ <editorsettings>
+  <export format="tmx"/>
+ </editorsettings>
+ <tileset firstgid="1" name="grassHalf_left" tilewidth="128" tileheight="128" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="игра/game/assets/ground/Grass/grassHalf_left.png" width="128" height="128"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="2" name="grassHalf_mid" tilewidth="128" tileheight="128" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="игра/game/assets/ground/Grass/grassHalf_mid.png" width="128" height="128"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="3" name="grassHalf_right" tilewidth="128" tileheight="128" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="игра/game/assets/ground/Grass/grassHalf_right.png" width="128" height="128"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="4" name="grassHalf" tilewidth="128" tileheight="128" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="игра/game/assets/ground/Grass/grassHalf.png" width="128" height="128"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="5" name="grass" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/ground/Grass/grass.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="6" name="doorClosed_mid" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/doorClosed_mid.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="7" name="doorClosed_top" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/doorClosed_top.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="8" name="grassHill_right" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/ground/Grass/grassHill_right.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="9" name="spikes" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/spikes.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="10" name="grassCenter_round" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/ground/Grass/grassCenter_round.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="11" name="boxItem" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/boxItem.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="12" name="lockYellow" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/lockYellow.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="13" name="hudCoin" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/Hud/hudCoin.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="14" name="hudKey_yellow" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/Hud/hudKey_yellow.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="15" name="hudJewel_blue" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/Hud/hudJewel_blue.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="16" name="fly" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/enemies/fly.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="17" name="sawHalf_move" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/enemies/sawHalf_move.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="18" name="slimePurple" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/enemies/slimePurple.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="19" name="mushroomRed" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/mushroomRed.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="20" name="snail" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/enemies/snail.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="21" name="alienPink_front" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/player/alienPink_front.png" width="131" height="188"/>
+ </tileset>
+ <tileset firstgid="22" name="cactus" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/cactus.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="23" name="bush" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/bush.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="24" name="signExit" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/signExit.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="25" name="doorOpen_mid" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/doorOpen_mid.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="26" name="doorOpen_top" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="игра/game/assets/tiles/doorOpen_top.png" width="128" height="128"/>
+ </tileset>
+ <layer id="4" name="Слой тайлов 1" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBi5gAWKqQlY0fBwBKT6jYWBNmFNCRAmUx85ccvCMDjDABug1H+0BlJ0sAOb3yWhtDgUg4AYkjyMLYxDPzH2ceGQoycejIB9gOxlA2IJGpqPLbyxxQWITW55hQ1wMdA3TQ329EVLAACnnwK2
+  </data>
+ </layer>
+ <layer id="7" name="Слой тайлов 2" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+  </data>
+ </layer>
+ <objectgroup id="5" name="Слой объектов 1">
+  <object id="32" gid="14" x="442" y="256" width="128" height="128"/>
+  <object id="33" gid="11" x="2048" y="1920" width="128" height="128"/>
+  <object id="34" gid="11" x="2176" y="1920" width="128" height="128"/>
+  <object id="35" gid="16" x="2688" y="1920" width="128" height="128"/>
+  <object id="36" gid="16" x="2688" y="2048" width="128" height="128"/>
+  <object id="37" gid="17" x="3584" y="2176" width="128" height="128"/>
+  <object id="39" gid="9" x="896" y="2176" width="128" height="128"/>
+  <object id="40" gid="9" x="1024" y="2176" width="128" height="128"/>
+  <object id="41" gid="9" x="0" y="2176" width="128" height="128"/>
+  <object id="43" gid="9" x="128" y="2176" width="128" height="128"/>
+  <object id="44" gid="9" x="256" y="2176" width="128" height="128"/>
+  <object id="45" gid="9" x="384" y="2176" width="128" height="128"/>
+  <object id="46" gid="9" x="1536" y="1536" width="128" height="128"/>
+  <object id="47" gid="9" x="1664" y="1536" width="128" height="128"/>
+  <object id="48" gid="9" x="1792" y="1536" width="128" height="128"/>
+  <object id="49" gid="18" x="896" y="1536" width="128" height="128"/>
+  <object id="50" gid="18" x="512" y="1536" width="128" height="128"/>
+  <object id="51" gid="18" x="1152" y="1536" width="128" height="128"/>
+  <object id="52" gid="20" x="2176" y="1536" width="128" height="128"/>
+  <object id="53" gid="20" x="2560" y="1536" width="128" height="128"/>
+  <object id="54" gid="9" x="3072" y="1536" width="128" height="128"/>
+  <object id="55" gid="9" x="3328" y="768" width="128" height="128"/>
+  <object id="56" gid="9" x="384" y="640" width="128" height="128"/>
+  <object id="57" gid="9" x="512" y="640" width="128" height="128"/>
+  <object id="58" gid="9" x="512" y="1152" width="128" height="128"/>
+  <object id="59" gid="9" x="2944" y="2176" width="128" height="128"/>
+  <object id="60" gid="9" x="3072" y="2176" width="128" height="128"/>
+  <object id="61" gid="9" x="3200" y="2176" width="128" height="128"/>
+  <object id="77" gid="13" x="384" y="1152" width="128" height="128"/>
+  <object id="78" gid="13" x="640" y="1152" width="128" height="128"/>
+  <object id="79" gid="13" x="896" y="896" width="128" height="128"/>
+  <object id="80" gid="13" x="1152" y="896" width="128" height="128"/>
+  <object id="81" gid="13" x="1024" y="896" width="128" height="128"/>
+  <object id="82" gid="13" x="640" y="640" width="128" height="128"/>
+  <object id="83" gid="13" x="2688" y="1024" width="128" height="128"/>
+  <object id="84" gid="13" x="2688" y="512" width="128" height="128"/>
+  <object id="85" gid="13" x="2816" y="512" width="128" height="128"/>
+  <object id="86" gid="13" x="3072" y="768" width="128" height="128"/>
+  <object id="87" gid="15" x="3200" y="256" width="128" height="128"/>
+  <object id="89" gid="12" x="710.667" y="1977.33" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="6" name="Слой объектов 2" visible="0"/>
+</map>

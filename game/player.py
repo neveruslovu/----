@@ -29,8 +29,8 @@ class Player:
 
 
     def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, 40, 50)
-        self.hitbox = pygame.Rect(10, 10, 20, 45)
+        self.rect = pygame.Rect(x, y, 60, 135)
+        self.hitbox = pygame.Rect(10, 10, 60, 135)
         self.velocity_y = 0
         self.velocity_x = 0
         self.speed = 5
@@ -85,14 +85,14 @@ class Player:
     
     def load_sprites(self):
         """Загружает все спрайты для анимаций"""
-        self.idle_sprite = asset_loader.load_image("player/alienPink_front.png", 0.3)
+        self.idle_sprite = asset_loader.load_image("player/alienPink_front.png",0.7)
         self.run_sprites = [
-            asset_loader.load_image("player/alienPink_stand.png", 0.3),
-            asset_loader.load_image("player/alienPink_walk1.png", 0.3),
-            asset_loader.load_image("player/alienPink_walk2.png", 0.3)
+            asset_loader.load_image("player/alienPink_stand.png", 0.7),
+            asset_loader.load_image("player/alienPink_walk1.png", 0.7),
+            asset_loader.load_image("player/alienPink_walk2.png", 0.7)
         ]
-        self.jump_sprite = asset_loader.load_image("player/alienPink_jump.png", 0.3)
-        self.land_sprite = asset_loader.load_image("player/alienPink_duck.png", 0.3)
+        self.jump_sprite = asset_loader.load_image("player/alienPink_jump.png",  0.7)
+        self.land_sprite = asset_loader.load_image("player/alienPink_duck.png",  0.7)
         
         print("🎨 All player sprites loaded successfully!")
     
