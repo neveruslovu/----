@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(__file__))
 
 from game.player import Player
 from game.camera import Camera
-from game.level import Level
+from game.levels.level1 import Level
 from ui.menu import MainMenu
 from ui.hud import HUD
 

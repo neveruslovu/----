@@ -3,9 +3,9 @@
 """
 
 import pygame
-from .platform import Platform
-from .enemies.slime import Slime
-from .asset_loader import asset_loader
+from ..platform import Platform
+from ..enemies.slime import Slime
+from ..asset_loader import asset_loader
 class Level:
     def __init__(self, name):
         print(f"🗺️ Creating level: {name}")
@@ -29,6 +29,7 @@ class Level:
         # Земля
         for x in range(-100, 900, 32):
             self.platforms.add(Platform(x, 500, 32, 32))
+            
         
         # Платформы
         platforms_data = [
