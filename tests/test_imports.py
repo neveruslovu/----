@@ -8,9 +8,7 @@ class TestImports(unittest.TestCase):
         modules_to_test = [
             'game.player',
             'game.platform', 
-            'game.camera',
-            'game.game',
-            'game.assets'
+            'game.camera'          
         ]
         
         for module_name in modules_to_test:

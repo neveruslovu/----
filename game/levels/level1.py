@@ -25,7 +25,7 @@ class Level:
         self.background = asset_loader.load_image("backgrounds/colored_grass.png", 1)
         
         self.player = None
-        self.player_spawn_point = (256, 700)
+        self.player_spawn_point = (20, 900)
         self.width = 30 * 128
         self.height = 20 * 128
         
@@ -91,6 +91,7 @@ class Level:
                             
                             if tile_gid == 21:  # Точка спавна
                                 self.player_spawn_point = (x * 128, y * 128)
+                               
                                 continue
                             
                             # 🔥 РАЗДЕЛЕНИЕ ОБЪЕКТОВ ПО ТИПАМ

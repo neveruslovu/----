@@ -46,15 +46,15 @@ class RPGPlatformer:
         try:
             # 🔥 ВАЖНО: Сначала создаем уровень, потом игрока
             self.level = Level("level1")
-            print("✅ Уровень создан")
+            
         
             # 🔥 ИГРОК СОЗДАЕТСЯ В ПОЗИЦИИ (0,0), НО СРАЗУ ПЕРЕМЕЩАЕТСЯ
             self.player = Player(0, 0)
-            print("✅ Игрок создан")
+       
         
             # 🔥 УСТАНАВЛИВАЕМ ИГРОКА В УРОВНЕ (ЭТО ПЕРЕМЕСТИТ ЕГО НА СПАВН)
-            self.level.set_player(self.player)
-        
+            self.level.set_player(self.player)   
+                     
             self.camera = Camera(self.player, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
             self.hud = HUD(self.player)
         
