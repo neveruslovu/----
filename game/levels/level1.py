@@ -10,7 +10,8 @@ from ..enemies.fly import Fly
 from ..items.items import Item
 from ..decorations import Decoration
 from ..asset_loader import asset_loader
-
+from ..enemies.saw import Saw
+from ..traps.spikes import Spikes
 class Level:
     def __init__(self, name):
         print(f"🗺️ Creating level: {name}")
@@ -174,23 +175,29 @@ class Level:
             # Улитки
             (2176, 1536, 128, 128, "snail"),
             (2560, 1536, 128, 128, "snail"),
+            
         ]
         
         for x, y, w, h, enemy_type in enemies_data:
-            if enemy_type == "slime":
-                self.enemies.add(Slime(x, y))
-            elif enemy_type == "snail":
-                try:
-                    self.enemies.add(Snail(x, y))
-                except:
-                    self.enemies.add(Slime(x, y))
-            elif enemy_type == "fly":
-                try:
-                    self.enemies.add(Fly(x, y))
-                except:
-                    # Временно как декорация
-                    decoration = Decoration(x, y, w, h, enemy_type)
-                    self.decorations.add(decoration)
+            try:
+                if enemy_type == "slime":
+                    enemy = Slime(x, y)
+                elif enemy_type == "snail":
+                    enemy = Snail(x, y)
+                elif enemy_type == "fly":
+                    enemy = Fly(x, y)
+                elif enemy_type == "saw":
+                    enemy = Saw(x, y)
+            
+                self.enemies.add(enemy)
+                print(f"✅ Враг {enemy_type} создан на позиции ({x}, {y})")
+            
+            except Exception as e:
+                print(f"❌ Ошибка создания врага {enemy_type}: {e}")
+                # Создаем слайма как запасной вариант
+                fallback_enemy = Slime(x, y)
+                self.enemies.add(fallback_enemy)
+                print(f"🔄 Создан слайм вместо {enemy_type}")
         
         # 🔥 ШИПЫ КАК ЛОВУШКИ - ПОДНИМАЕМ НА РАЗМЕР ТАЙЛА
         spikes_data = [
@@ -206,7 +213,7 @@ class Level:
         ]
         
         for x, y, w, h in spikes_data:
-            spike = Platform(x, y, w, h, platform_type="spikes", is_trap=True)
+            spike = Spikes(x, y, w, h)  # ✅ Используем класс Spikes
             self.traps.add(spike)
     
     def create_fallback_level(self):

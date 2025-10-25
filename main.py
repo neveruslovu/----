@@ -95,7 +95,8 @@ class RPGPlatformer:
             self.player.update(
             platforms=self.level.platforms,
             enemies=self.level.enemies,
-            current_time=current_time
+            current_time=current_time,
+            traps=self.level.traps
             )
         
             # Обновление уровня

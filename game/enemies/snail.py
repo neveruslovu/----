@@ -1,6 +1,6 @@
 # game/enemies/snail.py
 import pygame
-from .slime import Slime  # Наследуем от Slime для простоты
+from game.enemies.slime import Slime
 
 class Snail(Slime):
     def __init__(self, x, y):

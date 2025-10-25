@@ -16,9 +16,7 @@ class Item(pygame.sprite.Sprite):
             elif item_type == "key_yellow":
                 self.image = asset_loader.load_image("Hud/hudKey_yellow.png", scale=1)
             elif item_type == "jewel_blue":
-                self.image = asset_loader.load_image("Hud/hudJewel_blue.png", scale=1)
-            else:
-                self.image = asset_loader.load_image("tiles/boxItem.png", scale=1)
+                self.image = asset_loader.load_image("Hud/hudJewel_blue.png", scale=1)         
             
             self.image = pygame.transform.scale(self.image, (width, height))
         except:
@@ -30,8 +28,6 @@ class Item(pygame.sprite.Sprite):
                 self.image.fill((255, 255, 0))
             elif item_type == "jewel_blue":
                 self.image.fill((0, 0, 255))
-            else:
-                self.image.fill((150, 75, 0))
     
     def collect(self):
         """Собирает предмет и возвращает его тип"""

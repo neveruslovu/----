@@ -147,7 +147,7 @@ class Player:
         self.current_state = "idle"
         self.current_sprite = self.idle_sprite
 
-    def update(self, platforms, enemies, current_time):
+    def update(self, platforms, enemies, current_time,traps=None):
         """Обновление состояния игрока с системой урона"""
         # 💀 ОБНОВЛЕНИЕ РЕСПАВНА
         if not self.is_alive:
@@ -156,6 +156,10 @@ class Player:
                 self.respawn()
             return  # 🔥 Прерываем обновление если игрок мертв
         
+        # 🔪 ПРОВЕРКА СТОЛКНОВЕНИЙ С ШИПАМИ
+        if traps and not self.is_invincible and self.is_alive:
+            self.check_trap_collisions(traps, current_time)
+
         # ⚔️ Обновляем таймер неуязвимости
         if self.is_invincible:
             self.invincibility_timer -= 1/60
@@ -393,6 +397,31 @@ class Player:
             self.hitbox.height
         )
         return player_hitbox.colliderect(platform.rect)
+    
+
+    def check_trap_collisions(self, traps, current_time):
+        """Проверка столкновений с ловушками"""
+        for trap in traps:
+            if hasattr(trap, 'check_collision') and trap.check_collision(self):
+                self.take_damage_from_trap(trap.damage)
+
+    def take_damage_from_trap(self, damage):
+        """Получение урона от ловушки"""
+        if not self.is_invincible and self.is_alive:
+            damage_taken = self.health_component.take_damage(damage)
+        
+            if damage_taken:
+                self.is_invincible = True
+                self.invincibility_timer = self.invincibility_duration
+            
+                # Небольшой отскок от шипов
+                self.velocity_y = -8
+            
+                print(f"🔪 Игрок получил урон от шипов! Здоровье: {self.health_component.current_health}")
+            
+                if self.health_component.current_health <= 0:
+                    self.die()
+
 
     def draw(self, screen, camera):
         """Отрисовка игрока с эффектом мигания при неуязвимости"""
@@ -425,3 +454,5 @@ class Player:
                 self.hitbox.height
             )
             pygame.draw.rect(screen, (255, 0, 0), hitbox_rect, 2)
+
+    
