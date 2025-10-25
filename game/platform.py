@@ -11,6 +11,7 @@ class Platform(pygame.sprite.Sprite):
         
         # Словарь с путями к спрайтам для разных типов платформ
         sprite_paths = {
+            #platforms
             "grass": "ground/Grass/grass.png",
             "grass_half": "ground/Grass/grassHalf.png",
             "grass_half_left": "ground/Grass/grassHalf_left.png",
@@ -18,11 +19,24 @@ class Platform(pygame.sprite.Sprite):
             "grass_half_right": "ground/Grass/grassHalf_right.png",
             "grass_hill_right": "ground/Grass/grassHill_right.png",
             "grass_round": "ground/Grass/grassCenter_round.png",
+
             "box": "tiles/boxItem.png",
+
             "spikes": "tiles/spikes.png",
-            "door_mid": "tiles/doorClosed_mid.png",
+
+            "mushroom": "tiles/mushroomRed.png",
+
             "door_top": "tiles/doorClosed_top.png",
-            "mushroom": "tiles/mushroomRed.png"
+            "door_mid": "tiles/doorClosed_mid.png",
+            "doorOpen_mid": "tiles/doorOpen_mid.png",
+            "doorOpen_top": "tiles/doorOpen_top.png",
+
+            "signExit": "tiles/signExit.png",
+
+            "bush": "tiles/bush.png",
+            "cactus": "tlies/cactus.png"
+
+
         }
         
         # Цвета для заглушек по типам

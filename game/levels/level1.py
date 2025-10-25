@@ -7,6 +7,8 @@ from ..platform import Platform
 from ..enemies.slime import Slime
 from ..enemies.snail import Snail
 from ..enemies.fly import Fly
+from ..items.items import Item
+from ..decorations import Decoration
 from ..asset_loader import asset_loader
 
 class Level:
@@ -18,14 +20,14 @@ class Level:
         self.items = pygame.sprite.Group()
         self.doors = pygame.sprite.Group()
         self.traps = pygame.sprite.Group()
+        self.decorations = pygame.sprite.Group()
         self.background = asset_loader.load_image("backgrounds/colored_grass.png", 1)
         
         self.player = None
-        self.player_spawn_point = (256, 700)  # 🔥 ПО УМОЛЧАНИЮ
+        self.player_spawn_point = (256, 700)
         self.width = 30 * 128
         self.height = 20 * 128
         
-        # Загружаем уровень из XML
         self.load_from_xml()
         print(f"🗺️ Уровень '{name}' создан! Спавн игрока: {self.player_spawn_point}")
     
@@ -66,32 +68,14 @@ class Level:
             
             # 🔥 РАСШИРЕННОЕ СООТВЕТСТВИЕ GID ТИПАМ ПЛАТФОРМ
             gid_to_type = {
-                1: "grass_half_left",
-                2: "grass_half_mid", 
-                3: "grass_half_right",
-                4: "grass_half",
-                5: "grass",
-                6: "door_mid",
-                7: "door_top",
-                8: "grass_hill_right", 
-                9: "spikes",
-                10: "grass_round",
-                11: "box",
-                12: "lock_yellow",
-                13: "coin",
-                14: "key_yellow", 
-                15: "jewel_blue",
-                16: "fly",
-                17: "saw",
-                18: "slime",
-                19: "mushroom",
-                20: "snail",
-                21: "player_spawn",
-                22: "cactus",
-                23: "bush",
-                24: "sign_exit",
-                25: "door_open_mid",
-                26: "door_open_top"
+                1: "grass_half_left", 2: "grass_half_mid", 3: "grass_half_right",
+                4: "grass_half", 5: "grass", 6: "door_mid", 7: "door_top",
+                8: "grass_hill_right", 9: "spikes", 10: "grass_round",
+                11: "box", 12: "lock_yellow", 13: "coin", 14: "key_yellow", 
+                15: "jewel_blue", 16: "fly", 17: "saw", 18: "slime",
+                19: "mushroom", 20: "snail", 21: "player_spawn",
+                22: "cactus", 23: "bush", 24: "signExit",
+                25: "doorOpen_mid", 26: "doorOpen_top"
             }
             
             # Создаем платформы из тайловой карты
@@ -104,115 +88,121 @@ class Level:
                         if tile_gid in gid_to_type:
                             platform_type = gid_to_type[tile_gid]
                             
-                            # 🔥 ОСОБАЯ ОБРАБОТКА ДЛЯ ТОЧКИ СПАВНА ИГРОКА
-                            if tile_gid == 21:
+                            if tile_gid == 21:  # Точка спавна
                                 self.player_spawn_point = (x * 128, y * 128)
-                                continue  # Не создаем платформу для точки спавна
+                                continue
                             
-                            is_trap = (tile_gid == 9)
-                            is_door = (tile_gid in [6, 7, 25, 26])
-                            
-                            platform = Platform(
-                                x * 128, y * 128, 128, 128,
-                                platform_type=platform_type,
-                                is_trap=is_trap,
-                                is_door=is_door
-                            )
-                            
-                            if is_trap:
+                            # 🔥 РАЗДЕЛЕНИЕ ОБЪЕКТОВ ПО ТИПАМ
+                            if tile_gid in [19, 22, 23, 24]:  # Фоновые объекты
+                                decoration = Decoration(x * 128, y * 128, 128, 128, platform_type)
+                                self.decorations.add(decoration)
+                                
+                            elif tile_gid == 9:  # Шипы
+                                # 🔥 ПОДНИМАЕМ ШИПЫ НА РАЗМЕР ТАЙЛА ВВЕРХ
+                                platform = Platform(x * 128, y * 128 - 128, 128, 128, platform_type, is_trap=True)
                                 self.traps.add(platform)
-                            elif is_door:
+                                
+                            elif tile_gid in [6, 7, 25, 26]:  # Двери
+                                platform = Platform(x * 128, y * 128, 128, 128, platform_type, is_door=True)
                                 self.doors.add(platform)
-                            else:
+                                
+                            else:  # Обычные платформы
+                                platform = Platform(x * 128, y * 128, 128, 128, platform_type)
                                 self.platforms.add(platform)
             
-            # 🔥 ОБНОВЛЕННЫЕ ОБЪЕКТЫ ИЗ OBJECTGROUP
-            self.add_objects_from_xml()
-            
-            # Добавляем врагов из объектов
+            # 🔥 ОБНОВЛЕННЫЕ МЕТОДЫ ДЛЯ ОБЪЕКТОВ
+            self.add_items_from_xml()
             self.add_enemies_from_objects()
+            self.add_decorations_from_xml()
             
         except Exception as e:
             print(f"❌ Ошибка загрузки уровня: {e}")
             self.create_fallback_level()
     
-    def add_objects_from_xml(self):
-        """Добавляем объекты из objectgroup XML"""
-        # 🔥 ОБНОВЛЕННЫЕ ОБЪЕКТЫ ИЗ ВАШЕГО НОВОГО XML
-        objects_data = [
-            # Ключи и предметы
-            (442, 256, 128, 128, "key_yellow", 14),             # Желтый ключ
-            (710.667, 1977.33, 32, 32, "lock_yellow", 12),      # Желтый замок
-            (3200, 256, 128, 128, "jewel_blue", 15),            # Синий джевел
+    def add_items_from_xml(self):
+        """Добавляем собираемые предметы"""
+        items_data = [
+            (442, 256, 128, 128, "key_yellow"),
+            (3200, 256, 128, 128, "jewel_blue"),
             
             # Монеты
-            (384, 1152, 128, 128, "coin", 13),
-            (640, 1152, 128, 128, "coin", 13),
-            (896, 896, 128, 128, "coin", 13),
-            (1024, 896, 128, 128, "coin", 13),
-            (1152, 896, 128, 128, "coin", 13),
-            (640, 640, 128, 128, "coin", 13),
-            (2688, 1024, 128, 128, "coin", 13),
-            (2688, 512, 128, 128, "coin", 13),
-            (2816, 512, 128, 128, "coin", 13),
-            (3072, 768, 128, 128, "coin", 13),
-            
-            # Ящики
-            (2048, 1920, 128, 128, "box", 11),
-            (2176, 1920, 128, 128, "box", 11),
+            (384, 1152, 128, 128, "coin"),
+            (640, 1152, 128, 128, "coin"),
+            (896, 896, 128, 128, "coin"),
+            (1024, 896, 128, 128, "coin"),
+            (1152, 896, 128, 128, "coin"),
+            (640, 640, 128, 128, "coin"),
+            (2688, 1024, 128, 128, "coin"),
+            (2688, 512, 128, 128, "coin"),
+            (2816, 512, 128, 128, "coin"),
+            (3072, 768, 128, 128, "coin"),
         ]
         
-        for x, y, w, h, obj_type, gid in objects_data:
-            platform = Platform(x, y, w, h, platform_type=obj_type)
-            self.platforms.add(platform)
+        for x, y, w, h, item_type in items_data:
+            item = Item(x, y, w, h, item_type)
+            self.items.add(item)
+    
+    def add_decorations_from_xml(self):
+        """Добавляем фоновые объекты (не взаимодействуют с игроком)"""
+        decorations_data = [
+            # Ящики (не собираемые)
+            (2048, 1920, 128, 128, "box"),
+            (2176, 1920, 128, 128, "box"),
+            # Замок (не собираемый)
+            (710.667, 1977.33, 32, 32, "lock_yellow"),
+        ]
+        
+        for x, y, w, h, deco_type in decorations_data:
+            decoration = Decoration(x, y, w, h, deco_type)
+            self.decorations.add(decoration)
     
     def add_enemies_from_objects(self):
         """Добавляем врагов из объектов XML"""
-        # 🔥 ВРАГИ ИЗ OBJECTGROUP
         enemies_data = [
-            # Мухи (gid=16)
-            (2688, 1920, 128, 128, "fly", 16),
-            (2688, 2048, 128, 128, "fly", 16),
+            # Мухи
+            (2688, 1920, 128, 128, "fly"),
+            (2688, 2048, 128, 128, "fly"),
             
-            # Пила (gid=17)
-            (3584, 2176, 128, 128, "saw", 17),
+            # Пила
+            (3584, 2176, 128, 128, "saw"),
             
-            # Слаймы (gid=18)
-            (896, 1536, 128, 128, "slime", 18),
-            (512, 1536, 128, 128, "slime", 18),
-            (1152, 1536, 128, 128, "slime", 18),
+            # Слаймы
+            (896, 1536, 128, 128, "slime"),
+            (512, 1536, 128, 128, "slime"),
+            (1152, 1536, 128, 128, "slime"),
             
-            # Улитки (gid=20)
-            (2176, 1536, 128, 128, "snail", 20),
-            (2560, 1536, 128, 128, "snail", 20),
+            # Улитки
+            (2176, 1536, 128, 128, "snail"),
+            (2560, 1536, 128, 128, "snail"),
         ]
         
-        for x, y, w, h, enemy_type, gid in enemies_data:
+        for x, y, w, h, enemy_type in enemies_data:
             if enemy_type == "slime":
                 self.enemies.add(Slime(x, y))
             elif enemy_type == "snail":
-                # 🔥 ДОБАВЬТЕ КЛАСС Snail ЕСЛИ ЕГО ЕЩЕ НЕТ
                 try:
                     self.enemies.add(Snail(x, y))
                 except:
-                    # Временно используем Slime вместо Snail
                     self.enemies.add(Slime(x, y))
-            else:
-                # Для fly и saw временно создаем платформы
-                platform = Platform(x, y, w, h, platform_type=enemy_type)
-                self.platforms.add(platform)
+            elif enemy_type == "fly":
+                try:
+                    self.enemies.add(Fly(x, y))
+                except:
+                    # Временно как декорация
+                    decoration = Decoration(x, y, w, h, enemy_type)
+                    self.decorations.add(decoration)
         
-        # 🔥 ДОБАВЛЯЕМ ШИПЫ КАК ЛОВУШКИ
+        # 🔥 ШИПЫ КАК ЛОВУШКИ - ПОДНИМАЕМ НА РАЗМЕР ТАЙЛА
         spikes_data = [
-            (896, 2176, 128, 128), (1024, 2176, 128, 128),
-            (0, 2176, 128, 128), (128, 2176, 128, 128),
-            (256, 2176, 128, 128), (384, 2176, 128, 128),
-            (1536, 1536, 128, 128), (1664, 1536, 128, 128),
-            (1792, 1536, 128, 128), (3072, 1536, 128, 128),
-            (3328, 768, 128, 128), (384, 640, 128, 128),
-            (512, 640, 128, 128), (512, 1152, 128, 128),
-            (2944, 2176, 128, 128), (3072, 2176, 128, 128),
-            (3200, 2176, 128, 128)
+            (896, 2176 - 128, 128, 128), (1024, 2176 - 128, 128, 128),
+            (0, 2176 - 128, 128, 128), (128, 2176 - 128, 128, 128),
+            (256, 2176 - 128, 128, 128), (384, 2176 - 128, 128, 128),
+            (1536, 1536 - 128, 128, 128), (1664, 1536 - 128, 128, 128),
+            (1792, 1536 - 128, 128, 128), (3072, 1536 - 128, 128, 128),
+            (3328, 768 - 128, 128, 128), (384, 640 - 128, 128, 128),
+            (512, 640 - 128, 128, 128), (512, 1152 - 128, 128, 128),
+            (2944, 2176 - 128, 128, 128), (3072, 2176 - 128, 128, 128),
+            (3200, 2176 - 128, 128, 128)
         ]
         
         for x, y, w, h in spikes_data:
@@ -240,24 +230,59 @@ class Level:
         # Базовые враги
         self.enemies.add(Slime(500, 2272))
         self.enemies.add(Slime(800, 2272))
+        
+        print("✅ Резервный уровень создан")
     
     def update(self, dt):
         """Обновление уровня"""
         for enemy in self.enemies:
             enemy.update(dt, self)
+        
+        # 🔥 ПРОВЕРКА СБОРА ПРЕДМЕТОВ
+        if self.player:
+            self.check_item_collection()
+    
+    def check_item_collection(self):
+        """Проверка сбора предметов игроком"""
+        for item in self.items.sprites():
+            if not item.collected and self.player.rect.colliderect(item.rect):
+                item_type = item.collect()
+                if item_type:
+                    print(f"🎁 Собран предмет: {item_type}")
+                    # 🔥 ОБНОВЛЯЕМ СЧЕТЧИКИ ИГРОКА
+                    if item_type == "coin":
+                        self.player.coins += 1
+                    elif item_type == "key_yellow":
+                        self.player.keys += 1
+                    elif item_type == "jewel_blue":
+                        self.player.jewels += 1
     
     def draw(self, screen, camera):
-        """Отрисовка уровня"""
+        """Отрисовка уровня в правильном порядке"""
         screen.blit(self.background, (0, 0))
         
+        # 🔥 ПРАВИЛЬНЫЙ ПОРЯДОК ОТРИСОВКИ:
+        
+        # 1. Основные платформы и земля
         for platform in self.platforms:
             platform.draw(screen, camera)
         
-        for door in self.doors:
-            door.draw(screen, camera)
+        # 2. Декорации (рисуются ПОД врагами и предметами)
+        for decoration in self.decorations:
+            decoration.draw(screen, camera)
         
+        # 3. Шипы (рисуются ПОВЕРХ платформ)
         for trap in self.traps:
             trap.draw(screen, camera)
         
+        # 4. Двери
+        for door in self.doors:
+            door.draw(screen, camera)
+        
+        # 5. Враги
         for enemy in self.enemies:
             enemy.draw(screen, camera)
+        
+        # 6. Предметы (рисуются ПОВЕРХ всего)
+        for item in self.items:
+            item.draw(screen, camera)

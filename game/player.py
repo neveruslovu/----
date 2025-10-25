@@ -40,6 +40,10 @@ class Player:
         self.on_ground = False
         self.facing_right = True
         self.show_hitbox = True
+
+        self.coins = 0
+        self.keys = 0
+        self.jewels = 0
         
         # 🔧 УЛУЧШЕНИЕ: Coyote Time переменные
         self.coyote_time = 0.15
