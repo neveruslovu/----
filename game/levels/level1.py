@@ -22,8 +22,8 @@ class Level:
         self.doors = pygame.sprite.Group()
         self.traps = pygame.sprite.Group()
         self.decorations = pygame.sprite.Group()
-        self.background = asset_loader.load_image("backgrounds/colored_grass.png", 1)
-        
+        original_bg = asset_loader.load_image("backgrounds/colored_grass.png", 1)
+        self.background = pygame.transform.scale(original_bg, (1400, 800))       
         self.player = None
         self.player_spawn_point = (20, 900)
         self.width = 30 * 128
@@ -107,7 +107,8 @@ class Level:
                             elif tile_gid in [6, 7, 25, 26]:  # Двери
                                 platform = Platform(x * 128, y * 128, 128, 128, platform_type, is_door=True)
                                 self.doors.add(platform)
-                                
+                            
+
                             else:  # Обычные платформы
                                 platform = Platform(x * 128, y * 128, 128, 128, platform_type)
                                 self.platforms.add(platform)
@@ -124,20 +125,20 @@ class Level:
     def add_items_from_xml(self):
         """Добавляем собираемые предметы"""
         items_data = [
-            (442, 256, 128, 128, "key_yellow"),
-            (3200, 256, 128, 128, "jewel_blue"),
+            (442, 256-128, 128, 128, "key_yellow"),
+            (3200, 256-128, 128, 128, "jewel_blue"),
             
             # Монеты
-            (384, 1152, 128, 128, "coin"),
-            (640, 1152, 128, 128, "coin"),
-            (896, 896, 128, 128, "coin"),
-            (1024, 896, 128, 128, "coin"),
-            (1152, 896, 128, 128, "coin"),
-            (640, 640, 128, 128, "coin"),
-            (2688, 1024, 128, 128, "coin"),
-            (2688, 512, 128, 128, "coin"),
-            (2816, 512, 128, 128, "coin"),
-            (3072, 768, 128, 128, "coin"),
+            (384, 1152-128, 128, 128, "coin"),
+            (640, 1152-128, 128, 128, "coin"),
+            (896, 896-128, 128, 128, "coin"),
+            (1024, 896-128, 128, 128, "coin"),
+            (1152, 896-128, 128, 128, "coin"),
+            (640, 640-128, 128, 128, "coin"),
+            (2688, 1024-128, 128, 128, "coin"),
+            (2688, 512-128, 128, 128, "coin"),
+            (2816, 512-128, 128, 128, "coin"),
+            (3072, 768-128, 128, 128, "coin"),
         ]
         
         for x, y, w, h, item_type in items_data:
@@ -147,9 +148,10 @@ class Level:
     def add_decorations_from_xml(self):
         """Добавляем фоновые объекты (не взаимодействуют с игроком)"""
         decorations_data = [
-            # Ящики (не собираемые)
-            (2048, 1920, 128, 128, "box"),
-            (2176, 1920, 128, 128, "box"),
+
+             (2048, 1920-64, 128, 128, "box"),
+             (2176, 1920-64, 128, 128, "box"),
+           
             # Замок (не собираемый)
             (710.667, 1977.33, 32, 32, "lock_yellow"),
         ]
@@ -162,19 +164,16 @@ class Level:
         """Добавляем врагов из объектов XML"""
         enemies_data = [
             # Мухи
-            (2688, 1920, 128, 128, "fly"),
             (2688, 2048, 128, 128, "fly"),
             
             # Пила
             (3584, 2176, 128, 128, "saw"),
             
             # Слаймы
-            (860, 1300, 128, 128, "slime"),
-            (512, 1300, 128, 128, "slime"),
+    
             (1152, 1300, 128, 128, "slime"),
             
             # Улитки
-            (2176, 1300, 128, 128, "snail"),
             (2560, 1300, 128, 128, "snail"),
             
         ]
@@ -202,15 +201,14 @@ class Level:
         
         # 🔥 ШИПЫ КАК ЛОВУШКИ - ПОДНИМАЕМ НА РАЗМЕР ТАЙЛА
         spikes_data = [
-            (896, 2176 - 128, 128, 128), (1024, 2176 - 128, 128, 128),
+            (896, 2176 - 128, 128, 128), 
             (0, 2176 - 128, 128, 128), (128, 2176 - 128, 128, 128),
             (256, 2176 - 128, 128, 128), (384, 2176 - 128, 128, 128),
-            (1536, 1536 - 128, 128, 128), (1664, 1536 - 128, 128, 128),
-            (1792, 1536 - 128, 128, 128), (3072, 1536 - 128, 128, 128),
-            (3328, 768 - 128, 128, 128), (384, 640 - 128, 128, 128),
-            (512, 640 - 128, 128, 128), (512, 1152 - 128, 128, 128),
-            (2944, 2176 - 128, 128, 128), (3072, 2176 - 128, 128, 128),
-            (3200, 2176 - 128, 128, 128)
+            (1536, 1536 - 128, 128, 128), 
+            (3072, 1536 - 128, 128, 128),
+            (3328, 768 - 128, 128, 128), 
+            (512, 640 - 128, 128, 128)
+            
         ]
         
         for x, y, w, h in spikes_data:
@@ -222,6 +220,9 @@ class Level:
         """Обновление уровня"""
         for enemy in self.enemies:
             enemy.update(dt, self)
+            if hasattr(enemy, 'gravity') and not hasattr(enemy, 'rotation_speed'):
+                enemy.velocity.y += enemy.gravity * dt
+            self.check_enemy_collisions(enemy)
         
         # 🔥 ПРОВЕРКА СБОРА ПРЕДМЕТОВ
         if self.player:
@@ -241,6 +242,54 @@ class Level:
                         self.player.keys += 1
                     elif item_type == "jewel_blue":
                         self.player.jewels += 1
+
+    # В class Level (level1.py) добавим метод:
+
+    def check_enemy_collisions(self, enemy):
+        """Проверка столкновений врага только с физическими объектами"""
+        # 🔥 ПРОВЕРЯЕМ ТОЛЬКО ПЛАТФОРМЫ С КОЛЛИЗИЯМИ
+        for platform in self.platforms:
+            if not platform.has_collision:  # 🔥 ПРОПУСКАЕМ ДЕКОРАЦИИ
+                continue
+            
+            if enemy.rect.colliderect(platform.rect):
+                # Столкновение сверху (враг падает на платформу)
+                if (enemy.velocity.y > 0 and 
+                    enemy.rect.bottom > platform.rect.top and
+                    enemy.rect.top < platform.rect.top and
+                    abs(enemy.rect.bottom - platform.rect.top) < 20):  # Допуск 20px
+                
+                    enemy.rect.bottom = platform.rect.top
+                    enemy.velocity.y = 0
+                    return True
+            
+                # Столкновение снизу (враг ударяется головой)
+                elif (enemy.velocity.y < 0 and 
+                    enemy.rect.top < platform.rect.bottom and
+                    enemy.rect.bottom > platform.rect.bottom and
+                    abs(enemy.rect.top - platform.rect.bottom) < 20):
+                
+                    enemy.rect.top = platform.rect.bottom
+                    enemy.velocity.y = 0
+                    return True
+            
+                # Столкновение сбоку
+                elif (enemy.velocity.x != 0 and
+                    ((enemy.rect.right > platform.rect.left and enemy.direction > 0) or
+                    (enemy.rect.left < platform.rect.right and enemy.direction < 0))):
+                
+                    enemy.direction *= -1
+                    return True
+    
+        # 🔥 ПРОВЕРЯЕМ ДВЕРИ (они в отдельной группе)
+        for door in self.doors:
+            if enemy.rect.colliderect(door.rect):
+                # Только боковые столкновения с дверями
+                if enemy.velocity.x != 0:
+                    enemy.direction *= -1
+                    return True
+    
+        return False
     
     def draw(self, screen, camera):
         """Отрисовка уровня в правильном порядке"""

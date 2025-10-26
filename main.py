@@ -16,8 +16,8 @@ class RPGPlatformer:
         pygame.init()
         
         # Настройки экрана
-        self.SCREEN_WIDTH = 1000
-        self.SCREEN_HEIGHT = 600
+        self.SCREEN_WIDTH = 1400
+        self.SCREEN_HEIGHT = 800
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_caption("RPG PLATFORMER")
         

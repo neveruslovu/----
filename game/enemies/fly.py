@@ -31,9 +31,14 @@ class Fly(pygame.sprite.Sprite):
     
     def update(self, dt, level):
         """Обновление мухи"""
+        # Применяем гравитацию
+        self.velocity.y += self.gravity * dt
+    
         # Движение по горизонтали
         self.velocity.x = self.speed * self.direction
-        self.velocity.y += self.gravity * dt
+    
+        # Сохраняем старую позицию для определения столкновений
+        old_x, old_y = self.rect.x, self.rect.y
     
         # Применяем движение
         self.rect.x += self.velocity.x * dt
@@ -45,16 +50,10 @@ class Fly(pygame.sprite.Sprite):
         elif self.velocity.x < 0:
             self.facing_right = False
     
-        # Проверка столкновений с землей - используем реальную высоту уровня
-        ground_level = level.height - 100  # 100px от нижнего края уровня
-        if self.rect.bottom > ground_level:
-            self.rect.bottom = ground_level
-            self.velocity.y = 0
-        
-            # Меняем направление при достижении края уровня
-            level_width = level.width
-            if self.rect.right > level_width - 100 or self.rect.left < 100:
-                self.direction *= -1
+        # Проверка выхода за границы уровня
+        level_width = level.width
+        if self.rect.right > level_width - 50 or self.rect.left < 50:
+            self.direction *= -1
     
     def draw(self, screen, camera):
         """Отрисовка мухи"""

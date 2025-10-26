@@ -145,41 +145,43 @@ class Slime(pygame.sprite.Sprite):
                 self.kill()
                 print("💀 Слайм умер и удален!")
             else:
-                # 🔥 ВАЖНО: продолжаем обновлять анимацию даже когда слайм мертв
                 self.update_animation(dt)
-            return  # Прерываем остальное обновление если слайм мертв
-    
+            return
+
         # 🔥 ПРОВЕРЯЕМ НУЖНО ЛИ ЗАПУСТИТЬ СМЕРТЬ ПОСЛЕ АНИМАЦИИ УДАРА
-        # 🔥 ПЕРЕМЕСТИЛИ ЭТУ ПРОВЕРКУ В САМОЕ НАЧАЛО, ПРЕЖДЕ ЧЕМ ОБНОВЛЯТЬ АНИМАЦИЮ
         if self.will_die_after_hurt and not self.is_hurt:
             print("💀 Запускаем смерть после завершения анимации удара")
             self.die()
             self.will_die_after_hurt = False
-            return  # 🔥 ВАЖНО: прерываем обновление сразу после запуска смерти
-    
+            return
+
         # ⚔️ Обновляем таймер неуязвимости
         if self.is_invincible:
             self.invincibility_timer -= dt
             if self.invincibility_timer <= 0:
                 self.is_invincible = False
                 print("🛡️ Неуязвимость слайма закончилась")
-    
+
         # 🎨 Обновляем анимацию получения урона
         if self.is_hurt:
             self.hurt_timer -= dt
             if self.hurt_timer <= 0:
                 self.is_hurt = False
                 print("🎨 Анимация удара завершена")
-                # 🔥 ЕСЛИ СЛАЙМ ДОЛЖЕН УМЕРЕТЬ ПОСЛЕ АНИМАЦИИ УДАРА, ЗАПУСКАЕМ СМЕРТЬ СРАЗУ
                 if self.will_die_after_hurt:
                     print("💀 Немедленно запускаем смерть после завершения анимации удара")
                     self.die()
                     self.will_die_after_hurt = False
-                    return  # Прерываем обновление
-    
-        # Простое движение туда-сюда
-        self.velocity.x = self.speed * self.direction
+                    return
+
+        # Применяем гравитацию
         self.velocity.y += self.gravity * dt
+    
+        # Движение по горизонтали
+        self.velocity.x = self.speed * self.direction
+    
+        # Сохраняем старую позицию
+        old_x, old_y = self.rect.x, self.rect.y
     
         # Движение
         self.rect.x += self.velocity.x * dt
@@ -190,17 +192,6 @@ class Slime(pygame.sprite.Sprite):
             self.facing_right = True
         elif self.velocity.x < 0:
             self.facing_right = False
-    
-        # Простая проверка столкновений с землей
-        ground_level = level.height - 100  # 100px от нижнего края уровня
-        if self.rect.bottom > ground_level:
-            self.rect.bottom = ground_level
-            self.velocity.y = 0
-        
-            # Меняем направление при достижении края уровня
-            level_width = level.width
-            if self.rect.right > level_width - 100 or self.rect.left < 100:
-                self.direction *= -1
     
         # Обновление здоровья
         self.health_component.update(dt)

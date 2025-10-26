@@ -98,7 +98,7 @@ class Player:
         self.jump_sprite = asset_loader.load_image("player/alienPink_jump.png",  0.7)
         self.land_sprite = asset_loader.load_image("player/alienPink_duck.png",  0.7)
         
-        print("🎨 All player sprites loaded successfully!")
+
     
     def update_animation(self, moved):
         """Обновляет анимацию в зависимости от состояния игрока"""
@@ -148,7 +148,6 @@ class Player:
         self.current_sprite = self.idle_sprite
 
     def update(self, platforms, enemies, current_time,traps=None):
-     
         """Обновление состояния игрока с системой урона"""
         # 💀 ОБНОВЛЕНИЕ РЕСПАВНА
         if not self.is_alive:
