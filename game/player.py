@@ -148,6 +148,7 @@ class Player:
         self.current_sprite = self.idle_sprite
 
     def update(self, platforms, enemies, current_time,traps=None):
+     
         """Обновление состояния игрока с системой урона"""
         # 💀 ОБНОВЛЕНИЕ РЕСПАВНА
         if not self.is_alive:
@@ -155,11 +156,14 @@ class Player:
             if self.respawn_timer <= 0:
                 self.respawn()
             return  # 🔥 Прерываем обновление если игрок мертв
-        
+        if self.rect.y>3000:
+
+            self.health_component.current_health=0
+            self.die()
         # 🔪 ПРОВЕРКА СТОЛКНОВЕНИЙ С ШИПАМИ
         if traps and not self.is_invincible and self.is_alive:
             self.check_trap_collisions(traps, current_time)
-
+        
         # ⚔️ Обновляем таймер неуязвимости
         if self.is_invincible:
             self.invincibility_timer -= 1/60

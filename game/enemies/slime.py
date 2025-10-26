@@ -48,7 +48,7 @@ class Slime(pygame.sprite.Sprite):
         else:
             self.image = pygame.Surface((34, 24))
             self.rect = self.image.get_rect(topleft=(x, y))
-            self.hitbox = pygame.Rect(10, 10, 20, 20)
+            self.hitbox = pygame.Rect(0, 0, 20, 20)
         
         self.show_hitbox = True
         
@@ -60,16 +60,15 @@ class Slime(pygame.sprite.Sprite):
         self.gravity = 1500
         self.facing_right = True
         
-        print(f"🐌 Слайм создан на позиции ({x}, {y})!")
     
     def load_sprites(self):
         """Загружает 4 спрайта для анимаций слайма"""
         try:
             # 🎨 4 ОСНОВНЫХ СПРАЙТА
-            self.idle_sprite = asset_loader.load_image("enemies/slimePurple.png", 0.4)  # стоит
-            self.move_sprite = asset_loader.load_image("enemies/slimePurple_move.png", 0.4)  # движется
-            self.hurt_sprite = asset_loader.load_image("enemies/slimePurple_hit.png", 0.4)  # получил урон
-            self.dead_sprite = asset_loader.load_image("enemies/slimePurple_dead.png", 0.4)  # умер
+            self.idle_sprite = asset_loader.load_image("enemies/slimePurple.png", 1)  # стоит
+            self.move_sprite = asset_loader.load_image("enemies/slimePurple_move.png", 1)  # движется
+            self.hurt_sprite = asset_loader.load_image("enemies/slimePurple_hit.png", 1)  # получил урон
+            self.dead_sprite = asset_loader.load_image("enemies/slimePurple_dead.png", 1)  # умер
             
             print("🎨 4 спрайта слайма загружены успешно!")
             
@@ -193,12 +192,14 @@ class Slime(pygame.sprite.Sprite):
             self.facing_right = False
     
         # Простая проверка столкновений с землей
-        if self.rect.bottom > 500:  # Высота земли
-            self.rect.bottom = 500
+        ground_level = level.height - 100  # 100px от нижнего края уровня
+        if self.rect.bottom > ground_level:
+            self.rect.bottom = ground_level
             self.velocity.y = 0
         
-            # Меняем направление при достижении края
-            if self.rect.right > 700 or self.rect.left < 100:
+            # Меняем направление при достижении края уровня
+            level_width = level.width
+            if self.rect.right > level_width - 100 or self.rect.left < 100:
                 self.direction *= -1
     
         # Обновление здоровья
