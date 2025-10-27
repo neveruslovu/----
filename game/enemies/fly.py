@@ -8,7 +8,7 @@ class Fly(pygame.sprite.Sprite):
         
         # Загрузка спрайта
         try:
-            self.image = asset_loader.load_image("enemies/fly.png", 1)
+            self.image = asset_loader.load_image("enemies/fly.png", 0.6)
         except:
             # Заглушка если спрайт не загрузился
             self.image = pygame.Surface((40, 30))

@@ -89,7 +89,8 @@ class RPGPlatformer:
         
             # 🔧 ВАЖНО: Обрабатываем непрерывный ввод клавиш
             keys = pygame.key.get_pressed()
-            self.player.handle_keys(keys)  # 🔥 ДОБАВЛЕНО ЭТА СТРОКА
+            # 🔥 ИСПРАВЛЕНИЕ: Передаем platforms в handle_keys
+            self.player.handle_keys(keys, self.level.platforms)  # 🔥 ДОБАВЛЕНО platforms
         
             # 🔧 Обновляем игрока
             self.player.update(

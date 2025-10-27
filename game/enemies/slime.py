@@ -65,10 +65,10 @@ class Slime(pygame.sprite.Sprite):
         """Загружает 4 спрайта для анимаций слайма"""
         try:
             # 🎨 4 ОСНОВНЫХ СПРАЙТА
-            self.idle_sprite = asset_loader.load_image("enemies/slimePurple.png", 1)  # стоит
-            self.move_sprite = asset_loader.load_image("enemies/slimePurple_move.png", 1)  # движется
-            self.hurt_sprite = asset_loader.load_image("enemies/slimePurple_hit.png", 1)  # получил урон
-            self.dead_sprite = asset_loader.load_image("enemies/slimePurple_dead.png", 1)  # умер
+            self.idle_sprite = asset_loader.load_image("enemies/slimePurple.png", 0.6)  # стоит
+            self.move_sprite = asset_loader.load_image("enemies/slimePurple_move.png", 0.6)  # движется
+            self.hurt_sprite = asset_loader.load_image("enemies/slimePurple_hit.png", 0.6)  # получил урон
+            self.dead_sprite = asset_loader.load_image("enemies/slimePurple_dead.png", 0.6)  # умер
             
             print("🎨 4 спрайта слайма загружены успешно!")
             
