@@ -223,7 +223,7 @@ class Player:
                 # 🔥 УЛУЧШЕННОЕ ОПРЕДЕЛЕНИЕ НАПРАВЛЕНИЯ
                 if self.velocity_x > 0 or (self.rect.x > self.old_x):  # Движение вправо
                     # 🔥 ИСПРАВЛЕНИЕ: Используем реальный хитбокс для расчета
-                    self.rect.right = platform.rect.left - self.hitbox.x
+                    self.rect.right = platform.rect.left + self.hitbox.x
                     self.velocity_x = 0  # 🔥 ОБНУЛЯЕМ СКОРОСТЬ ВМЕСТО ОТСКОКА
                     # 🔥 УСТАНАВЛИВАЕМ ФЛАГ БЛОКИРОВКИ
                     self.blocked_right = True
@@ -387,33 +387,11 @@ class Player:
         
         # 🔥 ВАЖНОЕ ИСПРАВЛЕНИЕ: Проверяем горизонтальные столкновения сразу после движения
         if moved:
-            self.handle_horizontal_collisions_immediate(platforms)
+            self.handle_horizontal_collisions(platforms)
         
         self.update_animation(moved)
 
-    def handle_horizontal_collisions_immediate(self, platforms):
-        """🔥 ИСПРАВЛЕНИЕ: Теперь принимает platforms как параметр"""
-        """Немедленная обработка горизонтальных столкновений после движения от клавиш"""
-        for platform in platforms:
-            # Пропускаем платформы без коллизий
-            if hasattr(platform, 'has_collision') and not platform.has_collision:
-                continue
-        
-            if self.check_collision(platform):
-                # Определяем направление столкновения
-                if self.rect.x < self.old_x:  # Движение влево
-                    # 🔥 ИСПРАВЛЕНИЕ: Используем реальный хитбокс для расчета
-                    self.rect.left = platform.rect.right - self.hitbox.x
-                    self.blocked_left = True  # 🔥 УСТАНАВЛИВАЕМ ФЛАГ
-                    self.velocity_x = 0  # 🔥 ОБНУЛЯЕМ СКОРОСТЬ ВМЕСТО ОТСКОКА
-                    print("🔵 Immediate collision left - speed set to 0")
-                elif self.rect.x > self.old_x:  # Движение вправо
-                    # 🔥 ИСПРАВЛЕНИЕ: Используем реальный хитбокс для расчета
-                    self.rect.right = platform.rect.left - self.hitbox.x
-                    self.blocked_right = True  # 🔥 УСТАНАВЛИВАЕМ ФЛАГ
-                    self.velocity_x = 0  # 🔥 ОБНУЛЯЕМ СКОРОСТЬ ВМЕСТО ОТСКОКА
-                    print("🔵 Immediate collision right - speed set to 0")
-                break
+    
 
     def can_jump(self):
         return (self.on_ground or 
