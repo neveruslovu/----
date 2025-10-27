@@ -27,8 +27,8 @@ class Player:
             return self.current_health <= 0
 
     def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, 60, 80)
-        self.hitbox = pygame.Rect(10, 10, 40, 70)
+        self.rect = pygame.Rect(x, y, 80, 100)
+        self.hitbox = pygame.Rect(10, 10, 60, 90)
         
         self.velocity_y = 0
         self.velocity_x = 0
@@ -93,14 +93,14 @@ class Player:
     
     def load_sprites(self):
         """Загружает все спрайты для анимаций"""
-        self.idle_sprite = asset_loader.load_image("player/alienPink_front.png", 0.5)
+        self.idle_sprite = asset_loader.load_image("player/alienPink_front.png", 0.6)
         self.run_sprites = [
-            asset_loader.load_image("player/alienPink_stand.png", 0.5),
-            asset_loader.load_image("player/alienPink_walk1.png", 0.5),
-            asset_loader.load_image("player/alienPink_walk2.png", 0.5)
+            asset_loader.load_image("player/alienPink_stand.png", 0.6),
+            asset_loader.load_image("player/alienPink_walk1.png", 0.6),
+            asset_loader.load_image("player/alienPink_walk2.png", 0.6)
         ]
-        self.jump_sprite = asset_loader.load_image("player/alienPink_jump.png", 0.5)
-        self.land_sprite = asset_loader.load_image("player/alienPink_duck.png", 0.5)
+        self.jump_sprite = asset_loader.load_image("player/alienPink_jump.png", 0.6)
+        self.land_sprite = asset_loader.load_image("player/alienPink_duck.png", 0.6)
     
     def update_animation(self, moved):
         """Обновляет анимацию в зависимости от состояния игрока"""
@@ -227,14 +227,13 @@ class Player:
                     self.velocity_x = 0  # 🔥 ОБНУЛЯЕМ СКОРОСТЬ ВМЕСТО ОТСКОКА
                     # 🔥 УСТАНАВЛИВАЕМ ФЛАГ БЛОКИРОВКИ
                     self.blocked_right = True
-                    print("🔵 Collision right - speed set to 0")
+                    
                 elif self.velocity_x < 0 or (self.rect.x < self.old_x):  # Движение влево
                     # 🔥 ИСПРАВЛЕНИЕ: Используем реальный хитбокс для расчета
                     self.rect.left = platform.rect.right - self.hitbox.x
                     self.velocity_x = 0  # 🔥 ОБНУЛЯЕМ СКОРОСТЬ ВМЕСТО ОТСКОКА
                     # 🔥 УСТАНАВЛИВАЕМ ФЛАГ БЛОКИРОВКИ
                     self.blocked_left = True
-                    print("🔵 Collision left - speed set to 0")
                 break
 
     def handle_vertical_collisions(self, platforms):
@@ -256,11 +255,10 @@ class Player:
                     self.is_jumping = False
                     self.velocity_y = 0
                     self.time_since_ground = 0
-                    print("🟢 Landed on platform")
+           
                 elif self.velocity_y < 0:  # Движение вверх
                     self.rect.top = platform.rect.bottom
-                    self.velocity_y = 0
-                    print("🟡 Hit ceiling")
+                    self.velocity_y = 0                  
                 break
 
     def get_actual_hitbox(self):
