@@ -32,20 +32,7 @@ class Saw(pygame.sprite.Sprite):
     
     def update(self, dt, level):
         """Обновление пилы"""
-        # Вращение
-        self.rotation_angle += self.rotation_speed * dt
-        if self.rotation_angle >= 360:
-            self.rotation_angle = 0
         
-        # Движение по горизонтали
-        self.velocity.x = self.speed * self.direction
-        
-        # Применяем движение
-        self.rect.x += self.velocity.x * dt
-        
-        # Меняем направление при достижении края
-        if self.rect.right > 3800 or self.rect.left < 3500:
-            self.direction *= -1
     
     def draw(self, screen, camera):
         """Отрисовка пилы с вращением"""

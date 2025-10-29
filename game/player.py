@@ -33,7 +33,7 @@ class Player:
         self.velocity_y = 0
         self.velocity_x = 0
         self.speed = 5
-        self.jump_power = -15
+        self.jump_power = -23
         self.gravity = 0.8
         self.is_jumping = False
         self.on_ground = False

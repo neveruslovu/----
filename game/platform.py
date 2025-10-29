@@ -1,7 +1,7 @@
+# game/platform.py
 import pygame
 from .asset_loader import asset_loader
 
-# platform.py
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, platform_type="grass", is_trap=False, is_door=False):
         super().__init__()
@@ -10,40 +10,43 @@ class Platform(pygame.sprite.Sprite):
         self.is_trap = is_trap
         self.is_door = is_door
         
-        # 🔥 ДОБАВЛЯЕМ ФИЗИЧЕСКИЕ СВОЙСТВА
-        self.has_collision = True  # По умолчанию все платформы имеют коллизии
+        # 🔥 ИСПОЛЬЗУЕМ TILESET ДЛЯ ПОЛУЧЕНИЯ ИЗОБРАЖЕНИЯ
+        self.image = self.get_tile_image(platform_type)
+        if self.image:
+            self.image = pygame.transform.scale(self.image, (width, height))
+        else:
+            # Заглушка если тайл не найден
+            self.image = pygame.Surface((width, height))
+            self.image.fill((100, 200, 100))  # Зеленый для платформ
         
-        # Определяем какие типы НЕ должны иметь коллизии
-        non_collision_types = ["box", "lock_yellow", "mushroom", "cactus", "bush", "signExit"]
-        if platform_type in non_collision_types:
-            self.has_collision = False
-        
-        # Двери и ловушки тоже должны иметь коллизии
-        if is_trap or is_door:
-            self.has_collision = True
-        
-        sprite_paths = {
-            # platforms
-            "grass": "ground/Grass/grass.png",
-            "grass_half": "ground/Grass/grassHalf.png",
-            "grass_half_left": "ground/Grass/grassHalf_left.png",
-            "grass_half_mid": "ground/Grass/grassHalf_mid.png",
-            "grass_half_right": "ground/Grass/grassHalf_right.png",
-            "grass_hill_right": "ground/Grass/grassHill_right.png",
-            "grass_round": "ground/Grass/grassCenter_round.png",
-            "box": "tiles/boxItem.png",
-            "door_top": "tiles/doorClosed_top.png",
-            "door_mid": "tiles/doorClosed_mid.png",
-            "doorOpen_mid": "tiles/doorOpen_mid.png",
-            "doorOpen_top": "tiles/doorOpen_top.png",
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.has_collision = True  # Платформы всегда имеют коллизии
+    
+    def get_tile_image(self, platform_type):
+        """🔥 ПОЛУЧАЕМ ТАЙЛ ИЗ TILESET ПО ТИПУ"""
+        # Здесь нужно создать mapping между типами платформ и GID
+        type_to_gid = {
+            "grass1": 1,  
+            "grass_half": 2,
+            "grass_half_left": 3,
+            "grass_half_mid": 4,
+            "grass_half_right": 5,
+            "grass_hill_right": 6,
+            "grass_round": 7,
+            "triangle": 25,
+            "semitype1": 57,
+            "semitype2": 49, 
+            "semitype3": 41,
+            "grass2": 9,
+            "grass3": 89, 
+            "grass4": 97,
+            "grass5": 73,
+            "grass6": 17,
+            "box": 341
         }
         
-        self.image = None
-        sprite_path = sprite_paths.get(platform_type, "grass")      
-        self.image = asset_loader.load_image(sprite_path, scale=1)
-        self.image = pygame.transform.scale(self.image, (width, height))
-              
-        self.rect = self.image.get_rect(topleft=(x, y))
+        gid = type_to_gid.get(platform_type, 1)
+        return asset_loader.get_tile_image(gid)
     
     def draw(self, screen, camera):
         screen.blit(self.image, camera.apply(self.rect))

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="13" nextobjectid="32">
  <tileset firstgid="1" name="spritesheet_ground" tilewidth="128" tileheight="128" tilecount="128" columns="8">
-  <image source="ldesign/Spritesheets/spritesheet_ground.png" width="1024" height="2048"/>
+  <image source="Spritesheets/spritesheet_ground.png" width="1024" height="2048"/>
  </tileset>
  <tileset firstgid="129" name="spritesheet_items" tilewidth="128" tileheight="128" tilecount="32" columns="8">
-  <image source="ldesign/Spritesheets/spritesheet_items.png" width="1024" height="512"/>
+  <image source="Spritesheets/spritesheet_items.png" width="1024" height="512"/>
  </tileset>
  <tileset firstgid="161" name="spritesheet_players" tilewidth="128" tileheight="128" tilecount="128" columns="8">
-  <image source="ldesign/Spritesheets/spritesheet_players.png" width="1024" height="2048"/>
+  <image source="Spritesheets/spritesheet_players.png" width="1024" height="2048"/>
  </tileset>
  <tileset firstgid="289" name="spritesheet_tiles" tilewidth="128" tileheight="128" tilecount="128" columns="8">
-  <image source="ldesign/Spritesheets/spritesheet_tiles.png" width="1024" height="2048"/>
+  <image source="Spritesheets/spritesheet_tiles.png" width="1024" height="2048"/>
  </tileset>
  <tileset firstgid="417" name="spritesheet_enemies" tilewidth="128" tileheight="128" margin="2" tilecount="105" columns="7">
-  <image source="ldesign/Spritesheets/spritesheet_enemies.png" width="1024" height="2048"/>
+  <image source="Spritesheets/spritesheet_enemies.png" width="1024" height="2048"/>
  </tileset>
  <tileset firstgid="522" name="spritesheet_hud" tilewidth="128" tileheight="128" tilecount="64" columns="8">
-  <image source="ldesign/Spritesheets/spritesheet_hud.png" width="1024" height="1024"/>
+  <image source="Spritesheets/spritesheet_hud.png" width="1024" height="1024"/>
  </tileset>
  <layer id="1" name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
@@ -66,4 +66,4 @@
  <objectgroup id="10" name="spawn">
   <object id="21" type="player" gid="252" x="0" y="1280" width="128" height="128"/>
  </objectgroup>
-</map>
+</map>  
