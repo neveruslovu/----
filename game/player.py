@@ -407,8 +407,13 @@ class Player:
         # Проверяем имеет ли платформа коллизии
         if hasattr(platform, 'has_collision') and not platform.has_collision:
             return False
-            
-        return self.get_actual_hitbox().colliderect(platform.rect)
+        
+        # 🔥 ИСПОЛЬЗУЕМ НОВУЮ СИСТЕМУ КОЛЛИЗИЙ
+        if hasattr(platform, 'check_collision'):
+            return platform.check_collision(self.get_actual_hitbox())
+        else:
+            # Фолбэк на старую систему
+            return self.get_actual_hitbox().colliderect(platform.rect)
     
     def check_trap_collisions(self, traps, current_time):
         """Проверка столкновений с ловушками"""

@@ -201,7 +201,7 @@ class Level:
             # snail (GID 459 = 417 + 42)  
             (1790, 1264-128, 128, 128, "snail"),
             # saw (GID 481 = 417 + 64)
-            (2684, 1788-128, 128, 128, "saw"),
+            #(2684, 1788-128, 128, 128, "saw"),
             # fly (GID 475 = 417 + 58)
             (2308, 1648-128, 128, 128, "fly")
         ]
@@ -326,7 +326,7 @@ class Level:
             if not platform.has_collision:
                 continue
             
-            if enemy.rect.colliderect(platform.rect):
+            if hasattr(platform, 'check_collision') and platform.check_collision(enemy.rect):
                 # Столкновение сверху
                 if (enemy.velocity.y > 0 and 
                     enemy.rect.bottom > platform.rect.top and
