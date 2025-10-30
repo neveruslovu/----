@@ -88,7 +88,6 @@ class Slime(pygame.sprite.Sprite):
         """Создает цветную поверхность для тестирования"""
         surf = pygame.Surface((40, 30))
         surf.fill(color)
-        return surf
     
     def update_animation(self, dt):
         """Обновляет анимацию в зависимости от состояния"""
