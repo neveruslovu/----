@@ -27,12 +27,11 @@ class Saw(pygame.sprite.Sprite):
         # Хитбокс
         self.hitbox = pygame.Rect(10, 10, 30, 30)
         self.show_hitbox = True
-        
         print(f"🔄 Пила создана на позиции ({x}, {y})!")
     
     def update(self, dt, level):
         """Обновление пилы"""
-        
+
     
     def draw(self, screen, camera):
         """Отрисовка пилы с вращением"""

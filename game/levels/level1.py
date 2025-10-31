@@ -16,6 +16,7 @@ from ..traps.spikes import Spikes
 class Level:
     def __init__(self, name):
         print(f"🗺️ Creating level: {name}")
+        
         self.name = name
         self.platforms = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()

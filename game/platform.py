@@ -109,6 +109,7 @@ class Platform(pygame.sprite.Sprite):
     def draw(self, screen, camera):
         screen.blit(self.image, camera.apply(self.rect))
         
-        # 🔥 ОТЛАДКА: показать collision_rect (раскомментировать для тестирования)
-        # if hasattr(self, 'collision_rect') and self.collision_rect != self.rect:
-        #     pygame.draw.rect(screen, (255, 0, 0), camera.apply(self.collision_rect), 2)
+        # 🔥 ОТЛАДКА: показать collision_rect
+        if hasattr(self, 'collision_mask') and self.collision_rect != self.rect:
+             
+             pygame.draw.rect(screen, (255, 0, 0), camera.apply(self.collision_rect), 2)
